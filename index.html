@@ -54,7 +54,6 @@
     .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; margin-bottom: 1rem; }
     .card-desc { color: var(--stone-500); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; }
     
-    /* VOTE BUTTONS STYLE */
     .vote-container { display: flex; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--stone-100); }
     .vote-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; border-radius: 1rem; border: 1px solid var(--stone-200); background: white; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .vote-btn.active-up { background: #dcfce7; border-color: #4ade80; color: #166534; }
@@ -170,7 +169,10 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // DATA
+  // SOUNDS (Zorg dat deze MP3's in je map staan)
+  const soundLike = new Audio('thomasdislike.mp3');
+  const soundDislike = new Audio('thomasdislike.mp3');
+
   const ACTIVITIES = [
     { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
     { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp", url: "https://www.sportplazavlagtwedde.nl" },
@@ -198,7 +200,6 @@
   let currentFilter = 'alle';
   let votesData = {};
 
-  // FIREBASE SYNC
   onSnapshot(doc(db, "planner", "votes"), (snapshot) => {
     if (snapshot.exists()) {
       votesData = snapshot.data();
@@ -210,16 +211,31 @@
 
   window.handleVote = async (id, type) => {
     const userKey = `voted_${id}`;
-    const currentVote = localStorage.getItem(userKey);
-    if (currentVote) return alert("Je hebt al gestemd op dit item!");
+    const oldVote = localStorage.getItem(userKey); // 'up', 'down' of null
+    const updates = {};
 
-    await updateDoc(doc(db, "planner", "votes"), {
-      [`${id}_${type}`]: increment(1)
-    });
-    localStorage.setItem(userKey, type);
+    // Als we nogmaals op dezelfde knop drukken -> stem verwijderen
+    if (oldVote === type) {
+      updates[`${id}_${type}`] = increment(-1);
+      localStorage.removeItem(userKey);
+    } 
+    // Als we van stem wisselen (bijv van up naar down)
+    else if (oldVote && oldVote !== type) {
+      updates[`${id}_${oldVote}`] = increment(-1);
+      updates[`${id}_${type}`] = increment(1);
+      localStorage.setItem(userKey, type);
+      if(type === 'up') soundLike.play(); else soundDislike.play();
+    }
+    // Als we voor het eerst stemmen
+    else {
+      updates[`${id}_${type}`] = increment(1);
+      localStorage.setItem(userKey, type);
+      if(type === 'up') soundLike.play(); else soundDislike.play();
+    }
+
+    await updateDoc(doc(db, "planner", "votes"), updates);
   };
 
-  // RENDER FUNCTIES
   window.renderActivities = () => {
     const grid = document.getElementById('activitiesGrid');
     let items = currentFilter === 'alle' ? [...ACTIVITIES] : ACTIVITIES.filter(a => a.category === currentFilter);
@@ -262,7 +278,6 @@
     }).join('');
   };
 
-  // OVERIGE LOGICA (Bestaande)
   let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
   
   window.openMaps = (title) => {
@@ -311,7 +326,6 @@
   window.openModal = (id) => document.getElementById(id).classList.add('visible');
   window.closeModal = (id) => document.getElementById(id).classList.remove('visible');
 
-  // WEER
   async function fetchWeather() {
     try {
       const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=4');
@@ -329,7 +343,6 @@
     } catch(e) { console.error("Weer kon niet laden"); }
   }
 
-  // INIT
   renderActivities();
   renderBingo();
   fetchWeather();
