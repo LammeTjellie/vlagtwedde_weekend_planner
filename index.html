@@ -18,23 +18,23 @@
       --stone-500: #78716c;
       --stone-900: #1c1917;
       --orange: #ea580c;
-      /* Paas Kleuren */
+      /* Paas accenten */
       --easter-pink: #fce7f3;
       --easter-yellow: #fef9c3;
       --easter-green: #dcfce7;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
 
     body {
       background: var(--bg);
       color: var(--stone-900);
       font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
+      position: relative;
     }
 
-    /* HEADER UPGRADE */
+    /* HEADER */
     header {
       position: relative;
       overflow: hidden;
@@ -43,192 +43,107 @@
       background: linear-gradient(to bottom, #fff, var(--easter-yellow));
     }
 
-    .header-inner {
-      max-width: 1024px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
+    .header-inner { max-width: 1024px; margin: 0 auto; position: relative; z-index: 1; }
 
     .header-top {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;
     }
-
     @media (min-width: 768px) {
       .header-top { flex-direction: row; justify-content: space-between; align-items: flex-start; }
     }
 
-    .header-eyebrow {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--stone-500);
-      margin-bottom: 0.5rem;
-    }
+    .header-eyebrow { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stone-500); margin-bottom: 0.5rem; }
 
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      line-height: 1.1;
-      color: var(--stone-900);
-      font-style: italic;
-    }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; color: var(--stone-900); font-style: italic; }
+    h1 span { font-style: normal; font-family: 'DM Sans', sans-serif; font-weight: 900; text-transform: uppercase; color: var(--orange); display: block; }
 
-    h1 span {
-      font-style: normal;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: var(--orange);
-      display: block;
-    }
-
-    .header-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: flex-start;
-    }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-start; }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      border: 1px solid var(--stone-200);
-      background: white;
-      color: var(--stone-900);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-900); cursor: pointer; transition: all 0.2s; text-decoration: none;
     }
-
-    .btn:hover { background: var(--stone-100); transform: translateY(-1px); }
-    .btn-active { background: var(--orange) !important; border-color: var(--orange) !important; color: white !important; }
-    .btn svg { width: 1rem; height: 1rem; }
+    .btn:hover { background: var(--stone-100); }
 
     /* FILTERS */
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 2rem;
-    }
-
-    .filter-btn {
-      padding: 0.5rem 1.25rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      border: 1px solid var(--stone-200);
-      background: white;
-      color: var(--stone-500);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
+    .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+    .filter-btn { padding: 0.5rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-500); cursor: pointer; transition: all 0.3s; }
     .filter-btn.active { background: var(--stone-900); border-color: var(--stone-900); color: white; }
+
+    .header-deco { position: absolute; top: 0; right: 0; width: 33%; height: 100%; background: rgba(255, 247, 237, 0.5); transform: skewX(-12deg) translateX(50%); pointer-events: none; }
 
     /* MAIN */
     main { max-width: 1024px; margin: 0 auto; padding: 3rem 1.5rem; }
 
-    /* BINGO UPGRADE */
-    .bingo-section { margin-bottom: 3rem; }
-    .bingo-section.hidden { display: none; }
-    .bingo-card {
-      background: var(--stone-900);
-      color: white;
-      padding: 2rem;
-      border-radius: 2.5rem;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-    }
-
-    .bingo-header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
-    }
-
-    .bingo-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; }
-    .bingo-score { background: var(--orange); padding: 0.4rem 0.9rem; border-radius: 9999px; font-weight: 900; font-size: 0.8rem; }
-
-    /* B-I-N-G-O Fix */
-    .bingo-letters {
-      display: flex; justify-content: space-around;
-      background: var(--orange); color: white;
-      border-radius: 1rem; padding: 0.5rem; margin-bottom: 0.75rem;
-      font-weight: 900; font-size: 1.5rem; letter-spacing: 0.5rem;
-    }
-
-    .bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
-    .bingo-item {
-      aspect-ratio: 1; padding: 0.75rem; border-radius: 1rem;
-      background: #292524; border: 2px solid #3f3a36; color: #d6d3d1;
-      font-size: 0.75rem; font-weight: 700; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; text-align: center;
-      transition: all 0.2s; position: relative;
-    }
-    .bingo-item.checked { background: var(--orange); color: white; border-color: var(--orange); }
-    .bingo-item.checked .bingo-text { opacity: 0.3; }
-    .bingo-check { position: absolute; font-size: 2.5rem; display: none; }
-    .bingo-item.checked .bingo-check { display: block; }
-
-    /* ANIMATIE: FALLING EGGS */
-    .falling-egg {
-      position: fixed; top: -50px; z-index: 999;
-      font-size: 2rem; pointer-events: none;
-      animation: fall linear forwards;
-    }
-    @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
-
-    /* FULL CARD OVERLAY */
-    .win-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      z-index: 1000; display: none; flex-direction: column;
-      align-items: center; justify-content: center; color: white; text-align: center; padding: 2rem;
-    }
-    .win-overlay.visible { display: flex; }
-    .win-image-placeholder {
-      width: 300px; height: 300px; background: var(--stone-500);
-      border: 4px dashed var(--easter-yellow); border-radius: 2rem;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;
-    }
-
-    /* ACTIVITIES */
+    /* ACTIVITIES GRID */
     .activities-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
     @media (min-width: 640px) { .activities-grid { grid-template-columns: repeat(2, 1fr); } }
 
-    .activity-card { background: white; border: 1px solid var(--stone-200); border-radius: 2rem; overflow: hidden; animation: fadeUp 0.5s ease both; }
+    .activity-card { background: white; border: 1px solid var(--stone-200); border-radius: 2rem; overflow: hidden; animation: fadeUp 0.4s ease both; }
     .card-image-wrap { aspect-ratio: 16/10; overflow: hidden; position: relative; }
-    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+
+    .card-badge-top { position: absolute; top: 1rem; left: 1rem; display: flex; gap: 0.5rem; }
+    .badge { padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid; }
+    .badge-bezienswaardigheid { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+    .badge-attractie { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+    .badge-activiteit { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .badge-idee { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+
+    .card-badge-bottom { position: absolute; bottom: 1rem; left: 1rem; display: flex; gap: 0.5rem; }
+    .meta-pill { background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: var(--stone-900); display: flex; align-items: center; gap: 0.35rem; }
+    .meta-pill svg { width: 0.75rem; height: 0.75rem; }
+
     .card-body { padding: 2rem; }
     .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; margin-bottom: 1rem; }
-    
-    .badge { padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid; }
-    .badge-bezienswaardigheid { background: #d1fae5; color: #065f46; }
-    .badge-attractie { background: #dbeafe; color: #1e40af; }
-    .badge-activiteit { background: #fff7ed; color: #9a3412; }
-    .badge-idee { background: #f3e8ff; color: #6b21a8; }
+    .card-desc { color: var(--stone-500); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; }
 
-    /* WEATHER MODAL (Originele stijl behouden) */
-    .weather-bar { display: flex; align-items: center; gap: 0.75rem; background: white; border: 1px solid var(--stone-200); border-radius: 9999px; padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
-    .weather-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; padding: 1rem; background: rgba(28,25,23,0.4); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.25s; }
-    .weather-modal.visible { opacity: 1; pointer-events: auto; }
-    .weather-panel { background: var(--stone-900); color: white; border-radius: 2rem; padding: 1.75rem; max-width: 420px; width: 100%; transform: translateY(30px); transition: transform 0.3s; }
-    .weather-modal.visible .weather-panel { transform: translateY(0); }
-    .weather-days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
-    .weather-day { background: #292524; border-radius: 1rem; padding: 1rem 0.5rem; text-align: center; }
+    /* MODAL SYSTEM (BINGO & WEATHER) */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; padding: 1rem; background: rgba(28,25,23,0.4); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+    @media (min-width: 480px) { .modal-overlay { align-items: center; } }
+
+    .modal-panel {
+      background: var(--stone-900); color: white; border-radius: 2.5rem; padding: 1.75rem; max-width: 420px; width: 100%; transform: translateY(30px); transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+    .modal-overlay.visible .modal-panel { transform: translateY(0); }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; }
+    .modal-close { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #292524; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+
+    /* BINGO GRID SPECIFIC */
+    .bingo-letters { display: flex; justify-content: space-between; background: var(--orange); border-radius: 1rem; padding: 0.6rem 1.5rem; margin-bottom: 0.75rem; font-weight: 900; font-size: 1.2rem; letter-spacing: 0.2em; }
+    .bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; }
+    .bingo-item {
+      aspect-ratio: 1; padding: 0.5rem; border-radius: 1rem; background: #292524; border: 2px solid #3f3a36; color: #d6d3d1; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden;
+    }
+    .bingo-item.checked { background: var(--orange); border-color: var(--orange); color: white; }
+    .bingo-item .bingo-check { position: absolute; font-size: 2rem; opacity: 0; transform: scale(0.5); transition: all 0.3s; }
+    .bingo-item.checked .bingo-check { opacity: 1; transform: scale(1); }
+    .bingo-item.checked .bingo-text { opacity: 0.2; }
+
+    /* WEATHER GRID (4 DAYS) */
+    .weather-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .weather-day { background: #292524; border-radius: 1rem; padding: 0.75rem 0.25rem; text-align: center; }
     .weather-day.today { background: var(--orange); }
+    .wd-name { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: #a8a29e; margin-bottom: 0.4rem; }
+    .weather-day.today .wd-name { color: white; }
+    .wd-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .wd-temp { font-size: 0.9rem; font-weight: 900; }
 
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    /* ANIMATIONS */
+    @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+    .falling-egg { position: fixed; top: -50px; z-index: 999; font-size: 2rem; pointer-events: none; animation: fall linear forwards; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
-    footer { text-align: center; padding: 4rem 1.5rem; color: var(--stone-400); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; }
+    /* WIN OVERLAY */
+    .win-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 2rem; text-align: center; }
+    .win-overlay.visible { display: flex; }
+    .placeholder-img { width: 280px; height: 280px; background: #333; border: 4px dashed var(--orange); border-radius: 2rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; font-weight: 900; }
+
+    footer { text-align: center; padding: 3rem 1.5rem; color: var(--stone-400); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; }
   </style>
 </head>
 <body>
@@ -241,11 +156,11 @@
         <h1>Vlagtwedde<br><span>Weekend Planner</span></h1>
       </div>
       <div class="header-actions">
-        <button class="btn" id="bingoToggle" onclick="toggleBingoSection()">
-          <span style="font-size:1.2rem">🧺</span> Bingo
+        <button class="btn" onclick="openModal('bingoModal')">
+          <span style="color:var(--orange)">●</span> 🧺 Bingo
         </button>
-        <button class="weather-bar" onclick="openWeather()">
-          <span id="wIcon">⛅</span> <span id="wTemp">--°</span> <span>Vlagtwedde</span>
+        <button class="btn" onclick="openModal('weatherModal')">
+          <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
         </button>
       </div>
     </div>
@@ -254,57 +169,56 @@
       <button class="filter-btn" onclick="setFilter('bezienswaardigheid', this)">Bezienswaardigheid</button>
       <button class="filter-btn" onclick="setFilter('attractie', this)">Attractie</button>
       <button class="filter-btn" onclick="setFilter('activiteit', this)">Activiteit</button>
+      <button class="filter-btn" onclick="setFilter('idee', this)">Idee</button>
     </div>
   </div>
+  <div class="header-deco"></div>
 </header>
 
 <main>
-  <div class="bingo-section hidden" id="bingoSection">
-    <div class="bingo-card">
-      <div class="bingo-header">
-        <div>
-          <div class="bingo-title">Familie Weekend Bingo 🥚</div>
-          <div style="color:#a8a29e; font-size:0.8rem">Wie heeft als eerste de kaart vol?</div>
-        </div>
-        <div class="bingo-score" id="bingoScore">0 / 9</div>
-      </div>
-      <div class="bingo-letters">B I N G O</div>
-      <div class="bingo-grid" id="bingoGrid"></div>
-    </div>
-  </div>
-
   <div class="activities-grid" id="activitiesGrid"></div>
 </main>
 
-<div class="win-overlay" id="winOverlay">
-  <div class="win-image-placeholder">
-    <p style="color:white; font-weight:900">JOUW AFBEELDING / GIF HIER</p>
+<div class="modal-overlay" id="bingoModal" onclick="if(event.target===this)closeModal('bingoModal')">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">Familie Bingo 🥚</div>
+      <button class="modal-close" onclick="closeModal('bingoModal')">✕</button>
+    </div>
+    <div style="margin-bottom:1rem; font-size:0.8rem; color:var(--stone-400)" id="bingoScore">0 / 9 afgevinkt</div>
+    <div class="bingo-letters"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
+    <div class="bingo-grid" id="bingoGrid"></div>
   </div>
-  <h2 style="font-family:'Playfair Display'; font-size:2rem; font-style:italic">GEFELICITEERD! 🐣</h2>
-  <p style="margin:1rem 0 2rem">De kaart is helemaal vol!</p>
-  <button class="btn" onclick="document.getElementById('winOverlay').classList.remove('visible')">Sluiten</button>
 </div>
 
-<div class="weather-modal" id="weatherModal" onclick="if(event.target===this)closeWeather()">
-  <div class="weather-panel">
-    <div style="display:flex; justify-content:space-between; margin-bottom:1.5rem">
-      <h3 class="bingo-title">Weer in Vlagtwedde 🌤️</h3>
-      <button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer" onclick="closeWeather()">✕</button>
+<div class="modal-overlay" id="weatherModal" onclick="if(event.target===this)closeModal('weatherModal')">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">Weerbericht 🌤️</div>
+      <button class="modal-close" onclick="closeModal('weatherModal')">✕</button>
     </div>
     <div class="weather-days" id="weatherDays"></div>
   </div>
 </div>
 
-<footer>
-  SUMMIO EMSLANDERMEER • PASEN 2026 • VLAGTWEDDE
-</footer>
+<div class="win-overlay" id="winOverlay">
+  <div class="placeholder-img">JOUW AFBEELDING / GIF HIER</div>
+  <h2 style="font-family:'Playfair Display'; font-size:2rem; font-style:italic">BINGO! 🐣</h2>
+  <p style="margin-bottom:2rem">Je hebt de hele kaart vol!</p>
+  <button class="btn" onclick="document.getElementById('winOverlay').classList.remove('visible')">Tof!</button>
+</div>
+
+<footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
 
 <script>
   const ACTIVITIES = [
-    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Dinosaurussen op ware grootte en een dinomuseum.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp" },
-    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp" },
-    { id: "4", title: "Wildlands Dierentuin Emmen", description: "Een uniek avonturenpark met drie verschillende werelden.", category: "attractie", distance: 30, image: "https://www.wildlands.nl/image.php?file=/uploads/Wildlands_safari_neushoorns_1280x720_17623.jpg&width=1280" },
-    { id: "5", title: "Vestingdorp Bourtange", description: "Een uniek historisch verdedigingswerk.", category: "bezienswaardigheid", distance: 10, image: "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp" }
+    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp" },
+    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp" },
+    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", category: "idee", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png" },
+    { id: "4", title: "Wildlands Dierentuin Emmen", description: "Een uniek avonturenpark met drie verschillende werelden: Jungola, Serenga en Nortica.", category: "attractie", distance: 30, image: "https://www.wildlands.nl/image.php?file=/uploads/Wildlands_safari_neushoorns_1280x720_17623.jpg&width=1280" },
+    { id: "5", title: "Vestingdorp Bourtange", description: "Een uniek historisch verdedigingswerk dat zijn gelijke niet kent. Stap terug in de tijd.", category: "bezienswaardigheid", distance: 10, image: "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp" },
+    { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied, ideaal voor een rustige wandeling in de natuur.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png" },
+    { id: "7", title: "Hunebedcentrum Borger", description: "Ontdek de wereld van de hunebedbouwers en bekijk het grootste hunebed van Nederland.", category: "bezienswaardigheid", distance: 32, image: "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed-header2-1536x518.png" }
   ];
 
   const BINGO_ITEMS = [
@@ -319,8 +233,14 @@
     { id: 9, text: "🎯 Nog te bedenken..." }
   ];
 
-  let bingoState = JSON.parse(localStorage.getItem('bingo_vlagtwedde') || '{}');
   let currentFilter = 'alle';
+  let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
+
+  function travelTime(d) {
+    if (d <= 2) return Math.round(d * 2);
+    if (d <= 15) return Math.round(d * 1.5);
+    return Math.round(d * 1.2);
+  }
 
   function renderActivities() {
     const grid = document.getElementById('activitiesGrid');
@@ -329,13 +249,15 @@
       <div class="activity-card">
         <div class="card-image-wrap">
           <img src="${a.image}">
-          <div style="position:absolute; top:1rem; left:1rem">
-            <span class="badge badge-${a.category}">${a.category}</span>
+          <div class="card-badge-top"><span class="badge badge-${a.category}">${a.category}</span></div>
+          <div class="card-badge-bottom">
+            <div class="meta-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--orange)"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> ${a.distance} km</div>
+            <div class="meta-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#2563eb"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg> ± ${travelTime(a.distance)} min</div>
           </div>
         </div>
         <div class="card-body">
           <h3 class="card-title">${a.title}</h3>
-          <p style="color:var(--stone-500); font-size:0.875rem">${a.description}</p>
+          <p class="card-desc">${a.description}</p>
         </div>
       </div>
     `).join('');
@@ -344,30 +266,26 @@
   function renderBingo() {
     const grid = document.getElementById('bingoGrid');
     const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
-    document.getElementById('bingoScore').textContent = `${checkedCount} / 9`;
-    
+    document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
     grid.innerHTML = BINGO_ITEMS.map(item => `
-      <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingoItem(${item.id})">
+      <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
         <span class="bingo-text">${item.text}</span>
         <span class="bingo-check">✔️</span>
       </div>
     `).join('');
-
-    if (checkedCount === 9) {
-      document.getElementById('winOverlay').classList.add('visible');
-    }
+    if(checkedCount === 9) document.getElementById('winOverlay').classList.add('visible');
   }
 
-  function toggleBingoItem(id) {
+  function toggleBingo(id) {
     bingoState[id] = !bingoState[id];
-    localStorage.setItem('bingo_vlagtwedde', JSON.stringify(bingoState));
+    localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
     if(bingoState[id]) spawnEggs();
     renderBingo();
   }
 
   function spawnEggs() {
-    const emojis = ['🥚', '🐣', '🌸', '🐰', '🍫'];
-    for(let i=0; i<15; i++) {
+    const emojis = ['🥚', '🐣', '🌸', '🐰'];
+    for(let i=0; i<12; i++) {
       const egg = document.createElement('div');
       egg.className = 'falling-egg';
       egg.textContent = emojis[Math.floor(Math.random()*emojis.length)];
@@ -378,11 +296,25 @@
     }
   }
 
-  function toggleBingoSection() {
-    const s = document.getElementById('bingoSection');
-    const b = document.getElementById('bingoToggle');
-    s.classList.toggle('hidden');
-    b.classList.toggle('btn-active');
+  function openModal(id) { document.getElementById(id).classList.add('visible'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+
+  async function fetchWeather() {
+    try {
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=4');
+      const data = await res.json();
+      const WMO = { 0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 45:'🌫️', 61:'🌧️', 80:'🌦️', 95:'⛈️' };
+      document.getElementById('wIcon').textContent = WMO[data.current.weathercode] || '⛅';
+      document.getElementById('wTemp').textContent = Math.round(data.current.temperature_2m) + '°';
+      const daysNL = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+      document.getElementById('weatherDays').innerHTML = data.daily.time.map((t, i) => `
+        <div class="weather-day ${i===0?'today':''}">
+          <div class="wd-name">${i===0?'NU':daysNL[new Date(t).getDay()]}</div>
+          <div class="wd-icon">${WMO[data.daily.weathercode[i]] || '⛅'}</div>
+          <div class="wd-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
+        </div>
+      `).join('');
+    } catch(e) { console.error("Weer kon niet laden"); }
   }
 
   function setFilter(cat, btn) {
@@ -392,31 +324,6 @@
     renderActivities();
   }
 
-  // WEATHER API (Echt uit Vlagtwedde!)
-  async function fetchWeather() {
-    try {
-      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=3');
-      const data = await res.json();
-      const WMO = { 0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 61:'🌧️', 80:'🌦️' };
-      
-      document.getElementById('wIcon').textContent = WMO[data.current.weathercode] || '🌡️';
-      document.getElementById('wTemp').textContent = Math.round(data.current.temperature_2m) + '°';
-
-      const daysNL = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
-      document.getElementById('weatherDays').innerHTML = data.daily.time.map((t, i) => `
-        <div class="weather-day ${i===0?'today':''}">
-          <div style="font-size:0.7rem; font-weight:800; color:#a8a29e; margin-bottom:0.5rem">${i===0?'VANDAAG':daysNL[new Date(t).getDay()]}</div>
-          <div style="font-size:2rem; margin-bottom:0.5rem">${WMO[data.daily.weathercode[i]] || '⛅'}</div>
-          <div style="font-weight:900">${Math.round(data.daily.temperature_2m_max[i])}°</div>
-        </div>
-      `).join('');
-    } catch(e) { console.error("Weer data kon niet worden geladen."); }
-  }
-
-  function openWeather() { document.getElementById('weatherModal').classList.add('visible'); }
-  function closeWeather() { document.getElementById('weatherModal').classList.remove('visible'); }
-
-  // Init
   renderActivities();
   renderBingo();
   fetchWeather();
