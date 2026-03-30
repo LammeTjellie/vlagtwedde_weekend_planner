@@ -103,7 +103,7 @@
       </div>
       <div class="header-actions">
         <button class="btn" onclick="openModal('bingoModal')">
-          <span style="color:var(--orange)">●</span> 🧺 Bingo
+          🧺 Paas-Bingo
         </button>
         <button class="btn" onclick="openModal('weatherModal')">
           <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
@@ -115,7 +115,7 @@
       <button class="filter-btn" onclick="setFilter('bezienswaardigheid', this)">Bezienswaardigheid</button>
       <button class="filter-btn" onclick="setFilter('attractie', this)">Attractie</button>
       <button class="filter-btn" onclick="setFilter('activiteit', this)">Activiteit</button>
-      <button class="filter-btn" onclick="setFilter('idee', this)">Idee</button>
+      <button class="filter-btn" onclick="setFilter('shoppen', this)">Shoppen</button>
     </div>
   </div>
   <div class="header-deco"></div>
@@ -151,7 +151,6 @@
   <img src="Rudi_Paasei_In_Mond.gif" alt="Bingo Winnaar">
   <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic">BINGO! 🐣</h2>
   <p style="margin-bottom:2rem">Je hebt de hele kaart vol!</p>
-  <button class="btn" onclick="document.getElementById('winOverlay').classList.remove('visible')">Tof!</button>
   <button class="btn" style="margin-top: 1rem; background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="localStorage.removeItem('bingo_pazen'); location.reload();">Kaart resetten</button>
 </div>
 
@@ -162,7 +161,7 @@
   const ACTIVITIES = [
     { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
     { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp", url: "https://www.sportplazavlagtwedde.nl" },
-    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", category: "idee", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png", url: "https://winkelcentrumdeweiert.nl" },
+    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", category: "shoppen", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png", url: "https://winkelcentrumdeweiert.nl" },
     { id: "4", title: "Wildlands Dierentuin Emmen", description: "Een uniek avonturenpark met drie verschillende werelden.", category: "attractie", distance: 30, image: "https://images.tripper.nl/wildlands-adventure-zoo-ticket-korting/a558c7.jpg?auto=format&auto=enhance&q=100", url: "https://www.wildlands.nl" },
     { id: "5", title: "Vestingdorp Bourtange", description: "Een uniek historisch verdedigingswerk. Stap terug in de tijd.", category: "bezienswaardigheid", distance: 10, image: "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp", url: "https://www.bourtange.nl" },
     { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied voor een rustige wandeling.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png", url: "https://www.staatsbosbeheer.nl/natuurgebieden/westerwolde" },
@@ -170,7 +169,7 @@
     { id: "8", title: "Wonderwereld", description: "Ontdek, Beleef, Bewonder in de bossen van Ter Apel", category: "attractie", distance: 24, image: "https://wonderwereld.nl/wp-content/uploads/2023/04/IMG_3136.jpeg", url: "https://wonderwereld.nl" },
     { id: "9", title: "Buitencenturm Boomkroonpad", description: "Dit wandelpad leidt je hoog langs de toppen van de bomen.", category: "activiteit", distance: 32, image: "https://www.staatsbosbeheer.nl/-/media/hondsrug/hondsrug-boomkroonpad.jpg", url: "https://www.staatsbosbeheer.nl/uit-in-de-natuur/locaties/buitencentrum-boomkroonpad" },
   // VOEG HIER JE NIEUWE REGEL TOE, BIJV:
-    // { id: "8", title: "Nieuwe Plek", description: "Hele leuke tekst.", category: "idee", distance: 5, image: "URL", url: "WEBSITE" }
+    // { id: "8", title: "Nieuwe Plek", description: "Hele leuke tekst.", category: "shoppen", distance: 5, image: "URL", url: "WEBSITE" }
   ];
 
   const BINGO_ITEMS = [
@@ -234,7 +233,7 @@
     grid.innerHTML = BINGO_ITEMS.map(item => `
       <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
         <span class="bingo-text">${item.text}</span>
-        <span class="bingo-check">✔️</span>
+        <span class="bingo-check">🥚</span>
       </div>
     `).join('');
     if(checkedCount === 9) document.getElementById('winOverlay').classList.add('visible');
