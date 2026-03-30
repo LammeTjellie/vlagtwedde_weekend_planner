@@ -204,36 +204,36 @@
     /* BINGO CARD HEADER ROW */
     .bingo-letters {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.4rem;
-      margin-bottom: 0.4rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
     }
 
     .bingo-letter {
       background: var(--orange);
       color: white;
       font-weight: 900;
-      font-size: 1.1rem;
+      font-size: 1.3rem;
       text-align: center;
-      padding: 0.5rem 0;
-      border-radius: 0.6rem;
+      padding: 0.6rem 0;
+      border-radius: 0.75rem;
       letter-spacing: 0.05em;
     }
 
     .bingo-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.4rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
     }
 
     .bingo-item {
+      position: relative;
       aspect-ratio: 1;
-      padding: 0.4rem;
-      border-radius: 0.6rem;
+      padding: 0.6rem;
+      border-radius: 0.75rem;
       text-align: center;
-      font-size: 0.6rem;
+      font-size: clamp(0.65rem, 3vw, 0.85rem);
       line-height: 1.3;
-      transition: all 0.25s;
       border: 2px solid #292524;
       background: #292524;
       color: #d6d3d1;
@@ -244,30 +244,55 @@
       font-weight: 500;
       word-break: break-word;
       hyphens: auto;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.15s, background 0.15s;
     }
 
-    @media (min-width: 400px) { .bingo-item { font-size: 0.65rem; padding: 0.5rem; } }
-    @media (min-width: 640px) { .bingo-item { font-size: 0.75rem; padding: 0.6rem; } }
-
     .bingo-item:hover { border-color: #57534e; background: #333; }
+
+    .bingo-item .bingo-text {
+      position: relative;
+      z-index: 1;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .bingo-item .bingo-check {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      opacity: 0;
+      transform: scale(0.3) rotate(-20deg);
+      transition: opacity 0.3s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 2;
+    }
 
     .bingo-item.checked {
       background: var(--orange);
       border-color: var(--orange);
-      color: white;
-      transform: scale(0.96);
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    .bingo-item.checked::after {
-      content: '✓';
-      position: absolute;
-      font-size: 1.5rem;
-      font-weight: 900;
-      opacity: 0.25;
+    .bingo-item.checked .bingo-check {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
     }
 
-    .bingo-item { position: relative; }
+    .bingo-item.checked .bingo-text {
+      opacity: 0.2;
+      transform: scale(0.85);
+    }
+
+    @keyframes bingopop {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(0.87); }
+      65%  { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    .bingo-item.popping { animation: bingopop 0.4s ease forwards; }
 
     /* ACTIVITIES GRID */
     .activities-grid {
@@ -543,9 +568,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
           Bingo
         </button>
-        <button class="btn btn-icon" id="adminBtn" onclick="showPasswordModal()" title="Admin Mode">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
       </div>
     </div>
     <div class="filters" id="filters">
@@ -568,14 +590,12 @@
           <div class="bingo-title">Familie Weekend Bingo</div>
           <div class="bingo-subtitle">Wie heeft als eerste een volle rij?</div>
         </div>
-        <div class="bingo-score" id="bingoScore">0 / 15</div>
+        <div class="bingo-score" id="bingoScore">0 / 9</div>
       </div>
       <div class="bingo-letters">
         <div class="bingo-letter">B</div>
         <div class="bingo-letter">I</div>
         <div class="bingo-letter">N</div>
-        <div class="bingo-letter">G</div>
-        <div class="bingo-letter">O</div>
       </div>
       <div class="bingo-grid" id="bingoGrid"></div>
     </div>
@@ -592,18 +612,7 @@
   <p>Summio Emslandermeer &bull; Vlagtwedde &bull; 2026</p>
 </footer>
 
-<!-- PASSWORD MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-title">Admin Toegang</div>
-    <input type="password" class="modal-input" id="passwordInput" placeholder="Wachtwoord..." onkeydown="if(event.key==='Enter') submitPassword()">
-    <div class="modal-error" id="passwordError"></div>
-    <div class="modal-buttons">
-      <button class="btn-cancel" onclick="closeModal()">Annuleren</button>
-      <button class="btn-submit" onclick="submitPassword()">Inloggen</button>
-    </div>
-  </div>
-</div>
+
 
 <script>
   // ── DATA ──────────────────────────────────────────────────────────────
@@ -618,21 +627,15 @@
   ];
 
   const BINGO_ITEMS = [
-    { id: 1,  text: "Iemand vergeet de eieren" },
-    { id: 2,  text: "Opa valt in slaap in de stoel" },
-    { id: 3,  text: "Discussie over de route" },
-    { id: 4,  text: "Iemand zegt: 'Het is hier wel mooi hè?'" },
-    { id: 5,  text: "De hond steelt paasontbijt" },
-    { id: 6,  text: "Iemand klaagt over de kou" },
-    { id: 7,  text: "Er wordt vals gespeeld met een spelletje" },
-    { id: 8,  text: "Iemand vraagt: 'Wat gaan we eten?'" },
-    { id: 9,  text: "De plattegrond wordt ondersteboven gehouden" },
-    { id: 10, text: "Rudi zegt: 'Dit is het laatste jaar dat ik mee ga'" },
-    { id: 11, text: "Iemand klaagt dat een ander te lang op de wc zit" },
-    { id: 12, text: "Er wordt een stinkscheet gelaten" },
-    { id: 13, text: "Harry doet even z'n ogen dicht op de bank" },
-    { id: 14, text: "Anouk zakt door een stoel" },
-    { id: 15, text: "Er valt een kind uit bed" },
+    { id: 1,  text: "Rudi zegt: 'Dit is het laatste jaar dat ik mee ga'" },
+    { id: 2,  text: "Iemand klaagt dat een ander te lang op de wc zit" },
+    { id: 3,  text: "Er wordt een stinkscheet gelaten" },
+    { id: 4,  text: "Harry doet even z'n ogen dicht op de bank" },
+    { id: 5,  text: "Anouk zakt door een stoel" },
+    { id: 6,  text: "Er valt een kind uit bed" },
+    { id: 7,  text: "🎯 Nog te bedenken..." },
+    { id: 8,  text: "🎯 Nog te bedenken..." },
+    { id: 9,  text: "🎯 Nog te bedenken..." },
   ];
 
   // ── STATE ─────────────────────────────────────────────────────────────
@@ -712,7 +715,8 @@
 
     grid.innerHTML = BINGO_ITEMS.map(item => `
       <button class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
-        ${item.text}
+        <span class="bingo-text">${item.text}</span>
+        <span class="bingo-check">✓</span>
       </button>
     `).join('');
   }
@@ -729,13 +733,20 @@
 
   function toggleBingo(id) {
     if (id !== undefined) {
-      // Toggle bingo item
       bingoState[id] = !bingoState[id];
       localStorage.setItem('bingo', JSON.stringify(bingoState));
       renderBingo();
+      // Pop animation on the just-toggled item
+      setTimeout(() => {
+        const buttons = document.querySelectorAll('.bingo-item');
+        const idx = BINGO_ITEMS.findIndex(i => i.id === id);
+        if (buttons[idx]) {
+          buttons[idx].classList.add('popping');
+          buttons[idx].addEventListener('animationend', () => buttons[idx].classList.remove('popping'), { once: true });
+        }
+      }, 10);
       return;
     }
-    // Toggle section visibility
     bingoSectionVisible = !bingoSectionVisible;
     const section = document.getElementById('bingoSection');
     const btn = document.getElementById('bingoToggle');
@@ -743,35 +754,9 @@
     btn.classList.toggle('btn-active', bingoSectionVisible);
   }
 
-  function showPasswordModal() {
-    if (isAdmin) {
-      isAdmin = false;
-      document.getElementById('adminBtn').querySelector('svg').style.color = '';
-      return;
-    }
-    document.getElementById('modalOverlay').classList.add('visible');
-    setTimeout(() => document.getElementById('passwordInput').focus(), 100);
-  }
-
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('visible');
-    document.getElementById('passwordInput').value = '';
-    document.getElementById('passwordError').textContent = '';
-    document.getElementById('passwordInput').classList.remove('error');
-  }
-
-  function submitPassword() {
-    const val = document.getElementById('passwordInput').value;
-    if (val === 'ditishetlaatstejaar') {
-      isAdmin = true;
-      document.getElementById('adminBtn').querySelector('svg').style.color = 'var(--orange)';
-      closeModal();
-    } else {
-      document.getElementById('passwordError').textContent = 'Fout wachtwoord!';
-      document.getElementById('passwordInput').classList.add('error');
-      document.getElementById('passwordInput').value = '';
-    }
-  }
+  function showPasswordModal() { /* admin removed */ }
+  function closeModal() { }
+  function submitPassword() { }
 
   // Close modal on overlay click
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
