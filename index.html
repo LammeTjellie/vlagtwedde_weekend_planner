@@ -62,7 +62,6 @@
     }
     .btn:hover { background: var(--stone-100); }
 
-    /* Knop voor website bezoek */
     .btn-visit {
       margin-top: 1rem;
       background: var(--stone-900);
@@ -213,14 +212,13 @@
 <footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
 
 <script>
-  // Voeg hier zelf de linkjes toe bij 'url'
   const ACTIVITIES = [
-    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "#" },
-    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp", url: "#" },
-    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", category: "idee", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png", url: "#" },
+    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
+    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp", url: "https://www.sportplazavlagtwedde.nl" },
+    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", category: "idee", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png", url: "https://winkelcentrumdeweiert.nl" },
     { id: "4", title: "Wildlands Dierentuin Emmen", description: "Een uniek avonturenpark met drie verschillende werelden: Jungola, Serenga en Nortica.", category: "attractie", distance: 30, image: "https://images.tripper.nl/wildlands-adventure-zoo-ticket-korting/a558c7.jpg?auto=format&auto=enhance&q=100", url: "https://www.wildlands.nl" },
     { id: "5", title: "Vestingdorp Bourtange", description: "Een uniek historisch verdedigingswerk dat zijn gelijke niet kent. Stap terug in de tijd.", category: "bezienswaardigheid", distance: 10, image: "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp", url: "https://www.bourtange.nl" },
-    { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied, ideaal voor een rustige wandeling in de natuur.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png", url: "#" },
+    { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied, ideaal voor een rustige wandeling in de natuur.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png", url: "https://www.staatsbosbeheer.nl/natuurgebieden/westerwolde" },
     { id: "7", title: "Hunebedcentrum Borger", description: "Ontdek de wereld van de hunebedbouwers en bekijk het grootste hunebed van Nederland.", category: "bezienswaardigheid", distance: 32, image: "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed-header2-1536x518.png", url: "https://www.hunebedcentrum.eu" }
   ];
 
@@ -245,16 +243,15 @@
     return Math.round(d * 1.2);
   }
 
-  // Navigatie functie
+  // AANGEPAST: Directe routebeschrijving (navigatie)
   function openMaps(title) {
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ' Vlagtwedde')}`;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(title + ' Vlagtwedde')}`;
     window.open(url, '_blank');
   }
 
   function renderActivities() {
     const grid = document.getElementById('activitiesGrid');
     
-    // Filteren EN Sorteren (van laag naar hoog)
     let items = currentFilter === 'alle' ? [...ACTIVITIES] : ACTIVITIES.filter(a => a.category === currentFilter);
     items.sort((a, b) => a.distance - b.distance); 
 
@@ -264,10 +261,10 @@
           <img src="${a.image}">
           <div class="card-badge-top"><span class="badge badge-${a.category}">${a.category}</span></div>
           <div class="card-badge-bottom">
-            <div class="meta-pill" onclick="openMaps('${a.title}')" title="Open in Maps">
+            <div class="meta-pill" onclick="openMaps('${a.title}')" title="Navigatie starten">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--orange)"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> ${a.distance} km
             </div>
-            <div class="meta-pill" onclick="openMaps('${a.title}')" title="Open in Maps">
+            <div class="meta-pill" onclick="openMaps('${a.title}')" title="Navigatie starten">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#2563eb"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg> ± ${travelTime(a.distance)} min
             </div>
           </div>
