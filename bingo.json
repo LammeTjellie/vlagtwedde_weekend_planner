@@ -1,0 +1,11 @@
+[
+  { "id": 1, "text": "Iemand vergeet de eieren", "checked": false },
+  { "id": 2, "text": "Opa valt in slaap in de stoel", "checked": false },
+  { "id": 3, "text": "Discussie over de route", "checked": false },
+  { "id": 4, "text": "Iemand zegt: 'Het is hier wel mooi hè?'", "checked": false },
+  { "id": 5, "text": "De hond steelt paasontbijt", "checked": false },
+  { "id": 6, "text": "Iemand klaagt over de kou", "checked": false },
+  { "id": 7, "text": "Er wordt vals gespeeld met een spelletje", "checked": false },
+  { "id": 8, "text": "Iemand vraagt: 'Wat gaan we eten?'", "checked": false },
+  { "id": 9, "text": "De plattegrond wordt ondersteboven gehouden", "checked": false }
+]

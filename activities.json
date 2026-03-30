@@ -1,0 +1,65 @@
+[
+  {
+    "id": "1",
+    "title": "Dinopark Landgoed Tenaxx",
+    "description": "Een park vol met dinosaurussen op ware grootte, een dinomuseum, een binnenspeeltuin en meer.",
+    "url": "https://www.dinoparklandgoedtenaxx.nl/",
+    "distance": 10,
+    "category": "attractie",
+    "image": "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp"
+  },
+  {
+    "id": "2",
+    "title": "Sportsbar De Dribbel",
+    "description": "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.",
+    "url": "",
+    "distance": 1,
+    "category": "activiteit",
+    "image": "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp"
+  },
+  {
+    "id": "3",
+    "title": "Winkelcentrum de Weiert",
+    "description": "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.",
+    "url": "https://www.deweiert.nl/",
+    "distance": 30,
+    "category": "idee",
+    "image": "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png"
+  },
+  {
+    "id": "4",
+    "title": "Wildlands Dierentuin Emmen",
+    "description": "Een uniek avonturenpark met drie verschillende werelden: Jungola, Serenga en Nortica.",
+    "url": "https://www.wildlands.nl/",
+    "distance": 30,
+    "category": "attractie",
+    "image": "https://www.wildlands.nl/image.php?file=/uploads/Wildlands_safari_neushoorns_1280x720_17623.jpg&width=1280&factor=0.56&signature=9df5d6df"
+  },
+  {
+    "id": "5",
+    "title": "Vestingdorp Bourtange",
+    "description": "Een uniek historisch verdedigingswerk dat zijn gelijke niet kent. Stap terug in de tijd.",
+    "url": "https://www.bourtange.nl/",
+    "distance": 10,
+    "category": "bezienswaardigheid",
+    "image": "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp"
+  },
+  {
+    "id": "6",
+    "title": "Natuurgebied Liefstinghsbroek",
+    "description": "Een prachtig oud bosgebied, ideaal voor een rustige wandeling in de natuur.",
+    "url": "",
+    "distance": 2,
+    "category": "bezienswaardigheid",
+    "image": "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png"
+  },
+  {
+    "id": "7",
+    "title": "Hunebedcentrum Borger",
+    "description": "Ontdek de world van de hunebedbouwers en bekijk het grootste hunebed van Nederland.",
+    "url": "https://www.hunebedcentrum.eu/",
+    "distance": 32,
+    "category": "bezienswaardigheid",
+    "image": "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed-header2-1536x518.png"
+  }
+]

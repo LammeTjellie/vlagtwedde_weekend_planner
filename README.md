@@ -1,11 +1,38 @@
-<div align="center">
+# Weekend Planner Vlagtwedde
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Een interactieve weekend planner voor Summio Emslandermeer in Vlagtwedde.
 
-  <h1>Built with AI Studio</h2>
+## Features
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- **Activiteiten Overzicht**: Filter op categorieën (activiteiten, bezienswaardigheden, etc.)
+- **Reistijd Berekening**: Toont geschatte reistijd vanaf het park.
+- **Familie Bingo**: Interactieve bingo kaart voor het hele weekend.
+- **Admin Paneel**: Beveiligd met wachtwoord om activiteiten en bingo items aan te passen.
+- **Mobile Optimized**: Speciaal ontworpen voor gebruik op smartphones.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Setup & Development
 
-</div>
+1. Installeer dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start de development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) in je browser.
+
+## Productie
+
+Om de app te bouwen en te starten in productie modus:
+
+```bash
+npm run build
+npm start
+```
+
+## Admin Toegang
+
+Het standaard wachtwoord voor het admin paneel is: `ditishetlaatstejaar`
