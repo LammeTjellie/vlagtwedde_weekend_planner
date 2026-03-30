@@ -14,17 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
   
   <style>
-    /* ... (Houd alle bestaande CSS aan uit de vorige versie) ... */
-    /* Voeg deze kleine fix toe voor de win-overlay: */
-    .win-overlay { 
-      position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); 
-      display: none; flex-direction: column; align-items: center; justify-content: center; 
-      color: white; padding: 2rem; text-align: center; backdrop-filter: blur(10px);
-    }
-    .win-overlay.visible { display: flex; }
-    .win-overlay img { max-width: 80%; border-radius: 2rem; margin-bottom: 2rem; border: 3px solid var(--orange); }
-    
-    /* Bestaande styles hieronder laten staan... */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --bg: #fdfcf9; --stone-100: #f5f5f0; --stone-200: #e7e5e0; --stone-400: #a8a29e; --stone-500: #78716c; --stone-900: #1c1917; --orange: #ea580c; --easter-pink: #fce7f3; --easter-yellow: #fef9c3; --easter-green: #dcfce7; }
     html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -64,6 +53,14 @@
     .card-body { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
     .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; margin-bottom: 1rem; }
     .card-desc { color: var(--stone-500); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; }
+    
+    /* VOTE BUTTONS STYLE */
+    .vote-container { display: flex; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--stone-100); }
+    .vote-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; border-radius: 1rem; border: 1px solid var(--stone-200); background: white; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .vote-btn.active-up { background: #dcfce7; border-color: #4ade80; color: #166534; }
+    .vote-btn.active-down { background: #fee2e2; border-color: #f87171; color: #991b1b; }
+    .vote-count { font-variant-numeric: tabular-nums; }
+
     .modal-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; padding: 1rem; background: rgba(28,25,23,0.4); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.25s; }
     .modal-overlay.visible { opacity: 1; pointer-events: auto; }
     @media (min-width: 480px) { .modal-overlay { align-items: center; } }
@@ -86,6 +83,9 @@
     .weather-day.today .wd-name { color: white; }
     .wd-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
     .wd-temp { font-size: 0.9rem; font-weight: 900; }
+    .win-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 2rem; text-align: center; backdrop-filter: blur(10px); }
+    .win-overlay.visible { display: flex; }
+    .win-overlay img { max-width: 80%; border-radius: 2rem; margin-bottom: 2rem; border: 3px solid var(--orange); }
     @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     .falling-egg { position: fixed; top: -50px; z-index: 999; font-size: 2rem; pointer-events: none; animation: fall linear forwards; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -102,9 +102,7 @@
         <h1>Vlagtwedde<br><span>Weekend Planner</span></h1>
       </div>
       <div class="header-actions">
-        <button class="btn" onclick="openModal('bingoModal')">
-          🧺 Paas-Bingo
-        </button>
+        <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
         <button class="btn" onclick="openModal('weatherModal')">
           <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
         </button>
@@ -151,13 +149,28 @@
   <img src="Rudi_Paasei_In_Mond.gif" alt="Bingo Winnaar">
   <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic">BINGO! 🐣</h2>
   <p style="margin-bottom:2rem">Je hebt de hele kaart vol!</p>
-  <button class="btn" style="margin-top: 1rem; background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="localStorage.removeItem('bingo_pazen'); location.reload();">Kaart resetten</button>
+  <button class="btn" style="background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="localStorage.removeItem('bingo_pazen'); location.reload();">Kaart resetten</button>
 </div>
 
 <footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
 
-<script>
-  // HIER KUN JE MAKKELIJK ITEMS TOEVOEGEN:
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, onSnapshot, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDM-7IhOf0gRKVDv8rCdvQrKkRKd6kP9-A",
+    authDomain: "paas-planner.firebaseapp.com",
+    projectId: "paas-planner",
+    storageBucket: "paas-planner.firebasestorage.app",
+    messagingSenderId: "423781486356",
+    appId: "1:423781486356:web:99aa95df4a36b455b9bc01"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // DATA
   const ACTIVITIES = [
     { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
     { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp", url: "https://www.sportplazavlagtwedde.nl" },
@@ -167,9 +180,7 @@
     { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied voor een rustige wandeling.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png", url: "https://www.staatsbosbeheer.nl/natuurgebieden/westerwolde" },
     { id: "7", title: "Hunebedcentrum Borger", description: "Ontdek de wereld van de hunebedbouwers.", category: "bezienswaardigheid", distance: 32, image: "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed-header2-1536x518.png", url: "https://www.hunebedcentrum.eu" },
     { id: "8", title: "Wonderwereld", description: "Ontdek, Beleef, Bewonder in de bossen van Ter Apel", category: "attractie", distance: 24, image: "https://wonderwereld.nl/wp-content/uploads/2023/04/IMG_3136.jpeg", url: "https://wonderwereld.nl" },
-    { id: "9", title: "Buitencenturm Boomkroonpad", description: "Dit wandelpad leidt je hoog langs de toppen van de bomen.", category: "activiteit", distance: 32, image: "https://www.staatsbosbeheer.nl/-/media/hondsrug/hondsrug-boomkroonpad.jpg", url: "https://www.staatsbosbeheer.nl/uit-in-de-natuur/locaties/buitencentrum-boomkroonpad" },
-  // VOEG HIER JE NIEUWE REGEL TOE, BIJV:
-    // { id: "8", title: "Nieuwe Plek", description: "Hele leuke tekst.", category: "shoppen", distance: 5, image: "URL", url: "WEBSITE" }
+    { id: "9", title: "Buitencenturm Boomkroonpad", description: "Dit wandelpad leidt je hoog langs de toppen van de bomen.", category: "activiteit", distance: 32, image: "https://www.staatsbosbeheer.nl/-/media/hondsrug/hondsrug-boomkroonpad.jpg", url: "https://www.staatsbosbeheer.nl/uit-in-de-natuur/locaties/buitencentrum-boomkroonpad" }
   ];
 
   const BINGO_ITEMS = [
@@ -185,25 +196,41 @@
   ];
 
   let currentFilter = 'alle';
-  let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
+  let votesData = {};
 
-  function travelTime(d) {
-    if (d <= 2) return Math.round(d * 2);
-    if (d <= 15) return Math.round(d * 1.5);
-    return Math.round(d * 1.2);
-  }
+  // FIREBASE SYNC
+  onSnapshot(doc(db, "planner", "votes"), (snapshot) => {
+    if (snapshot.exists()) {
+      votesData = snapshot.data();
+      renderActivities();
+    } else {
+      setDoc(doc(db, "planner", "votes"), {});
+    }
+  });
 
-  function openMaps(title) {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(title + ' Vlagtwedde')}`;
-    window.open(url, '_blank');
-  }
+  window.handleVote = async (id, type) => {
+    const userKey = `voted_${id}`;
+    const currentVote = localStorage.getItem(userKey);
+    if (currentVote) return alert("Je hebt al gestemd op dit item!");
 
-  function renderActivities() {
+    await updateDoc(doc(db, "planner", "votes"), {
+      [`${id}_${type}`]: increment(1)
+    });
+    localStorage.setItem(userKey, type);
+  };
+
+  // RENDER FUNCTIES
+  window.renderActivities = () => {
     const grid = document.getElementById('activitiesGrid');
     let items = currentFilter === 'alle' ? [...ACTIVITIES] : ACTIVITIES.filter(a => a.category === currentFilter);
-    items.sort((a, b) => a.distance - b.distance); 
+    items.sort((a, b) => a.distance - b.distance);
 
-    grid.innerHTML = items.map(a => `
+    grid.innerHTML = items.map(a => {
+      const up = votesData[`${a.id}_up`] || 0;
+      const down = votesData[`${a.id}_down`] || 0;
+      const myVote = localStorage.getItem(`voted_${a.id}`);
+      
+      return `
       <div class="activity-card">
         <div class="card-image-wrap">
           <img src="${a.image}">
@@ -213,7 +240,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--orange)"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> ${a.distance} km
             </div>
             <div class="meta-pill" onclick="openMaps('${a.title}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#2563eb"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg> ± ${travelTime(a.distance)} min
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#2563eb"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg> ± ${Math.round(a.distance * 1.5)} min
             </div>
           </div>
         </div>
@@ -221,12 +248,42 @@
           <h3 class="card-title">${a.title}</h3>
           <p class="card-desc">${a.description}</p>
           <a href="${a.url}" target="_blank" class="btn btn-visit">Bezoek website</a>
+          
+          <div class="vote-container">
+            <button class="vote-btn ${myVote==='up'?'active-up':''}" onclick="handleVote('${a.id}', 'up')">
+              👍 <span class="vote-count">${up}</span>
+            </button>
+            <button class="vote-btn ${myVote==='down'?'active-down':''}" onclick="handleVote('${a.id}', 'down')">
+              👎 <span class="vote-count">${down}</span>
+            </button>
+          </div>
         </div>
-      </div>
-    `).join('');
-  }
+      </div>`;
+    }).join('');
+  };
 
-  function renderBingo() {
+  // OVERIGE LOGICA (Bestaande)
+  let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
+  
+  window.openMaps = (title) => {
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(title + ' Vlagtwedde')}`, '_blank');
+  };
+
+  window.setFilter = (cat, btn) => {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderActivities();
+  };
+
+  window.toggleBingo = (id) => {
+    bingoState[id] = !bingoState[id];
+    localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
+    if(bingoState[id]) spawnEggs();
+    renderBingo();
+  };
+
+  window.renderBingo = () => {
     const grid = document.getElementById('bingoGrid');
     const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
     document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
@@ -234,19 +291,11 @@
       <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
         <span class="bingo-text">${item.text}</span>
         <span class="bingo-check">🥚</span>
-      </div>
-    `).join('');
+      </div>`).join('');
     if(checkedCount === 9) document.getElementById('winOverlay').classList.add('visible');
-  }
+  };
 
-  function toggleBingo(id) {
-    bingoState[id] = !bingoState[id];
-    localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
-    if(bingoState[id]) spawnEggs();
-    renderBingo();
-  }
-
-  function spawnEggs() {
+  window.spawnEggs = () => {
     const emojis = ['🥚', '🐣', '🌸', '🐰'];
     for(let i=0; i<12; i++) {
       const egg = document.createElement('div');
@@ -257,11 +306,12 @@
       document.body.appendChild(egg);
       setTimeout(() => egg.remove(), 3000);
     }
-  }
+  };
 
-  function openModal(id) { document.getElementById(id).classList.add('visible'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+  window.openModal = (id) => document.getElementById(id).classList.add('visible');
+  window.closeModal = (id) => document.getElementById(id).classList.remove('visible');
 
+  // WEER
   async function fetchWeather() {
     try {
       const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=4');
@@ -275,18 +325,11 @@
           <div class="wd-name">${i===0?'NU':daysNL[new Date(t).getDay()]}</div>
           <div class="wd-icon">${WMO[data.daily.weathercode[i]] || '⛅'}</div>
           <div class="wd-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
-        </div>
-      `).join('');
+        </div>`).join('');
     } catch(e) { console.error("Weer kon niet laden"); }
   }
 
-  function setFilter(cat, btn) {
-    currentFilter = cat;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderActivities();
-  }
-
+  // INIT
   renderActivities();
   renderBingo();
   fetchWeather();
