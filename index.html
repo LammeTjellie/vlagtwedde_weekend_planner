@@ -169,9 +169,11 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // SOUNDS (Zorg dat deze MP3's in je map staan)
+  // SOUNDS
   const soundLike = new Audio('thomasdislike.mp3');
   const soundDislike = new Audio('thomasdislike.mp3');
+  const soundBingoCheck = new Audio('bingocheck.mp3'); // Zorg dat dit bestand bestaat
+  const soundBingoWin = new Audio('bingowin.mp3');     // Zorg dat dit bestand bestaat
 
   const ACTIVITIES = [
     { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
@@ -211,22 +213,19 @@
 
   window.handleVote = async (id, type) => {
     const userKey = `voted_${id}`;
-    const oldVote = localStorage.getItem(userKey); // 'up', 'down' of null
+    const oldVote = localStorage.getItem(userKey);
     const updates = {};
 
-    // Als we nogmaals op dezelfde knop drukken -> stem verwijderen
     if (oldVote === type) {
       updates[`${id}_${type}`] = increment(-1);
       localStorage.removeItem(userKey);
     } 
-    // Als we van stem wisselen (bijv van up naar down)
     else if (oldVote && oldVote !== type) {
       updates[`${id}_${oldVote}`] = increment(-1);
       updates[`${id}_${type}`] = increment(1);
       localStorage.setItem(userKey, type);
       if(type === 'up') soundLike.play(); else soundDislike.play();
     }
-    // Als we voor het eerst stemmen
     else {
       updates[`${id}_${type}`] = increment(1);
       localStorage.setItem(userKey, type);
@@ -294,7 +293,14 @@
   window.toggleBingo = (id) => {
     bingoState[id] = !bingoState[id];
     localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
-    if(bingoState[id]) spawnEggs();
+    
+    // Geluid bij afvinken (alleen als de state naar 'true' gaat)
+    if(bingoState[id]) {
+      soundBingoCheck.currentTime = 0; // Reset geluid voor snelle kliks
+      soundBingoCheck.play();
+      spawnEggs();
+    }
+    
     renderBingo();
   };
 
@@ -302,12 +308,20 @@
     const grid = document.getElementById('bingoGrid');
     const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
     document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
+    
     grid.innerHTML = BINGO_ITEMS.map(item => `
       <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
         <span class="bingo-text">${item.text}</span>
         <span class="bingo-check">🥚</span>
       </div>`).join('');
-    if(checkedCount === 9) document.getElementById('winOverlay').classList.add('visible');
+    
+    // Bingo voltooid
+    if(checkedCount === 9) {
+      if(!document.getElementById('winOverlay').classList.contains('visible')) {
+        soundBingoWin.play(); // Speel win-geluid
+      }
+      document.getElementById('winOverlay').classList.add('visible');
+    }
   };
 
   window.spawnEggs = () => {
