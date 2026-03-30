@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Weekend Planner Vlagtwedde - Pasen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
+    /* ... (Stijlen blijven grotendeels gelijk aan de vorige versie) ... */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg: #fdfcf9;
       --stone-100: #f5f5f0;
@@ -18,151 +17,66 @@
       --stone-500: #78716c;
       --stone-900: #1c1917;
       --orange: #ea580c;
-      /* Paas accenten */
-      --easter-pink: #fce7f3;
-      --easter-yellow: #fef9c3;
       --easter-green: #dcfce7;
+      --easter-yellow: #fef9c3;
     }
-
-    html { scroll-behavior: smooth; overflow-x: hidden; }
-
-    body {
-      background: var(--bg);
-      color: var(--stone-900);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      position: relative;
-    }
-
-    /* HEADER */
-    header {
-      position: relative;
-      overflow: hidden;
-      padding: 4rem 1.5rem 3rem;
-      border-bottom: 6px solid var(--easter-green);
-      background: linear-gradient(to bottom, #fff, var(--easter-yellow));
-    }
-
+    body { background: var(--bg); color: var(--stone-900); font-family: 'DM Sans', sans-serif; }
+    header { padding: 4rem 1.5rem 3rem; border-bottom: 6px solid var(--easter-green); background: linear-gradient(to bottom, #fff, var(--easter-yellow)); position: relative; overflow: hidden; }
     .header-inner { max-width: 1024px; margin: 0 auto; position: relative; z-index: 1; }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 4rem); font-style: italic; }
+    h1 span { font-style: normal; font-family: 'DM Sans', sans-serif; font-weight: 900; text-transform: uppercase; color: var(--orange); display: block; font-size: 0.4em; letter-spacing: 0.1em; }
+    
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; cursor: pointer; text-decoration: none; color: inherit; transition: 0.2s; }
+    .btn-primary { background: var(--stone-900); color: white; border-color: var(--stone-900); width: 100%; justify-content: center; margin-top: 1rem; }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-    .header-top {
-      display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;
-    }
-    @media (min-width: 768px) {
-      .header-top { flex-direction: row; justify-content: space-between; align-items: flex-start; }
-    }
-
-    .header-eyebrow { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stone-500); margin-bottom: 0.5rem; }
-
-    h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; color: var(--stone-900); font-style: italic; }
-    h1 span { font-style: normal; font-family: 'DM Sans', sans-serif; font-weight: 900; text-transform: uppercase; color: var(--orange); display: block; }
-
-    .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-start; }
-
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-900); cursor: pointer; transition: all 0.2s; text-decoration: none;
-    }
-    .btn:hover { background: var(--stone-100); }
-
-    /* FILTERS */
     .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
-    .filter-btn { padding: 0.5rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-500); cursor: pointer; transition: all 0.3s; }
-    .filter-btn.active { background: var(--stone-900); border-color: var(--stone-900); color: white; }
+    .filter-btn { padding: 0.5rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-500); cursor: pointer; }
+    .filter-btn.active { background: var(--stone-900); color: white; border-color: var(--stone-900); }
 
-    .header-deco { position: absolute; top: 0; right: 0; width: 33%; height: 100%; background: rgba(255, 247, 237, 0.5); transform: skewX(-12deg) translateX(50%); pointer-events: none; }
-
-    /* MAIN */
     main { max-width: 1024px; margin: 0 auto; padding: 3rem 1.5rem; }
-
-    /* ACTIVITIES GRID */
     .activities-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
     @media (min-width: 640px) { .activities-grid { grid-template-columns: repeat(2, 1fr); } }
 
-    .activity-card { background: white; border: 1px solid var(--stone-200); border-radius: 2rem; overflow: hidden; animation: fadeUp 0.4s ease both; }
+    .activity-card { background: white; border: 1px solid var(--stone-200); border-radius: 2rem; overflow: hidden; display: flex; flex-direction: column; }
     .card-image-wrap { aspect-ratio: 16/10; overflow: hidden; position: relative; }
-    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
-
-    .card-badge-top { position: absolute; top: 1rem; left: 1rem; display: flex; gap: 0.5rem; }
-    .badge { padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid; }
-    .badge-bezienswaardigheid { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
-    .badge-attractie { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
-    .badge-activiteit { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
-    .badge-idee { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
-
+    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .card-badge-top { position: absolute; top: 1rem; left: 1rem; }
+    .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; background: white; border: 1px solid var(--stone-200); }
+    
     .card-badge-bottom { position: absolute; bottom: 1rem; left: 1rem; display: flex; gap: 0.5rem; }
-    .meta-pill { background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: var(--stone-900); display: flex; align-items: center; gap: 0.35rem; }
-    .meta-pill svg { width: 0.75rem; height: 0.75rem; }
+    .meta-pill { background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); padding: 0.4rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+    .meta-pill:hover { border-color: var(--orange); background: white; }
 
-    .card-body { padding: 2rem; }
-    .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; margin-bottom: 1rem; }
-    .card-desc { color: var(--stone-500); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; }
+    .card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; margin-bottom: 0.5rem; }
+    .card-desc { color: var(--stone-500); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem; flex-grow: 1; }
 
-    /* MODAL SYSTEM (BINGO & WEATHER) */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; padding: 1rem; background: rgba(28,25,23,0.4); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.25s;
-    }
-    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-    @media (min-width: 480px) { .modal-overlay { align-items: center; } }
+    /* Modal styles (Bingo & Weer) */
+    .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-overlay.visible { display: flex; }
+    .modal-panel { background: var(--stone-900); color: white; border-radius: 2rem; padding: 2rem; width: 100%; max-width: 400px; position: relative; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+    
+    .bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem; padding: 2px; }
+    .bingo-item { aspect-ratio: 1/1; background: #292524; border-radius: 1rem; padding: 0.5rem; font-size: 0.7rem; text-align: center; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; }
+    .bingo-item.checked { background: var(--orange); border-color: white; }
 
-    .modal-panel {
-      background: var(--stone-900); color: white; border-radius: 2.5rem; padding: 1.75rem; max-width: 420px; width: 100%; transform: translateY(30px); transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
-    }
-    .modal-overlay.visible .modal-panel { transform: translateY(0); }
-
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .modal-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; }
-    .modal-close { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #292524; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
-
-    /* BINGO GRID SPECIFIC */
-    .bingo-letters { display: flex; justify-content: space-between; background: var(--orange); border-radius: 1rem; padding: 0.6rem 1.5rem; margin-bottom: 0.75rem; font-weight: 900; font-size: 1.2rem; letter-spacing: 0.2em; }
-    .bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; }
-    .bingo-item {
-      aspect-ratio: 1; padding: 0.5rem; border-radius: 1rem; background: #292524; border: 2px solid #3f3a36; color: #d6d3d1; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden;
-    }
-    .bingo-item.checked { background: var(--orange); border-color: var(--orange); color: white; }
-    .bingo-item .bingo-check { position: absolute; font-size: 2rem; opacity: 0; transform: scale(0.5); transition: all 0.3s; }
-    .bingo-item.checked .bingo-check { opacity: 1; transform: scale(1); }
-    .bingo-item.checked .bingo-text { opacity: 0.2; }
-
-    /* WEATHER GRID (4 DAYS) */
-    .weather-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
-    .weather-day { background: #292524; border-radius: 1rem; padding: 0.75rem 0.25rem; text-align: center; }
+    .weather-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem; }
+    .weather-day { background: #292524; padding: 0.75rem; border-radius: 1rem; text-align: center; }
     .weather-day.today { background: var(--orange); }
-    .wd-name { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: #a8a29e; margin-bottom: 0.4rem; }
-    .weather-day.today .wd-name { color: white; }
-    .wd-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
-    .wd-temp { font-size: 0.9rem; font-weight: 900; }
-
-    /* ANIMATIONS */
-    @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
-    .falling-egg { position: fixed; top: -50px; z-index: 999; font-size: 2rem; pointer-events: none; animation: fall linear forwards; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* WIN OVERLAY */
-    .win-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 2rem; text-align: center; }
-    .win-overlay.visible { display: flex; }
-    .placeholder-img { width: 280px; height: 280px; background: #333; border: 4px dashed var(--orange); border-radius: 2rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; font-weight: 900; }
-
-    footer { text-align: center; padding: 3rem 1.5rem; color: var(--stone-400); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; }
   </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <div class="header-top">
-      <div>
-        <div class="header-eyebrow">🐰 Paasweekend 2026</div>
-        <h1>Vlagtwedde<br><span>Weekend Planner</span></h1>
-      </div>
-      <div class="header-actions">
-        <button class="btn" onclick="openModal('bingoModal')">
-          <span style="color:var(--orange)">●</span> 🧺 Bingo
-        </button>
-        <button class="btn" onclick="openModal('weatherModal')">
-          <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
-        </button>
-      </div>
+    <div class="header-eyebrow">🐰 Pasen 2026</div>
+    <h1><span>Weekend Planner</span>Vlagtwedde</h1>
+    <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+      <button class="btn" onclick="openModal('bingoModal')">🧺 Bingo</button>
+      <button class="btn" onclick="openModal('weatherModal')"><span id="wIcon">⛅</span> <span id="wTemp">--°</span></button>
     </div>
     <div class="filters">
       <button class="filter-btn active" onclick="setFilter('alle', this)">Alles</button>
@@ -172,7 +86,6 @@
       <button class="filter-btn" onclick="setFilter('idee', this)">Idee</button>
     </div>
   </div>
-  <div class="header-deco"></div>
 </header>
 
 <main>
@@ -181,83 +94,67 @@
 
 <div class="modal-overlay" id="bingoModal" onclick="if(event.target===this)closeModal('bingoModal')">
   <div class="modal-panel">
-    <div class="modal-header">
-      <div class="modal-title">Familie Bingo 🥚</div>
-      <button class="modal-close" onclick="closeModal('bingoModal')">✕</button>
-    </div>
-    <div style="margin-bottom:1rem; font-size:0.8rem; color:var(--stone-400)" id="bingoScore">0 / 9 afgevinkt</div>
-    <div class="bingo-letters"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
+    <button class="modal-close" onclick="closeModal('bingoModal')">✕</button>
+    <h2 style="font-family:'Playfair Display'; font-style:italic; margin-bottom:1rem;">Paas Bingo 🥚</h2>
     <div class="bingo-grid" id="bingoGrid"></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="weatherModal" onclick="if(event.target===this)closeModal('weatherModal')">
   <div class="modal-panel">
-    <div class="modal-header">
-      <div class="modal-title">Weerbericht 🌤️</div>
-      <button class="modal-close" onclick="closeModal('weatherModal')">✕</button>
-    </div>
+    <button class="modal-close" onclick="closeModal('weatherModal')">✕</button>
+    <h2 style="font-family:'Playfair Display'; font-style:italic; margin-bottom:1rem;">Weersverwachting 🌤️</h2>
     <div class="weather-days" id="weatherDays"></div>
   </div>
 </div>
 
-<div class="win-overlay" id="winOverlay">
-  <div class="placeholder-img">JOUW AFBEELDING / GIF HIER</div>
-  <h2 style="font-family:'Playfair Display'; font-size:2rem; font-style:italic">BINGO! 🐣</h2>
-  <p style="margin-bottom:2rem">Je hebt de hele kaart vol!</p>
-  <button class="btn" onclick="document.getElementById('winOverlay').classList.remove('visible')">Tof!</button>
-</div>
-
-<footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
-
 <script>
+  // DATA MET WEBSITE LINKS
   const ACTIVITIES = [
-    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp" },
-    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp" },
-    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", category: "idee", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png" },
-    { id: "4", title: "Wildlands Dierentuin Emmen", description: "Een uniek avonturenpark met drie verschillende werelden: Jungola, Serenga en Nortica.", category: "attractie", distance: 30, image: "https://images.tripper.nl/wildlands-adventure-zoo-ticket-korting/a558c7.jpg?auto=format&auto=enhance&q=100" },
-    { id: "5", title: "Vestingdorp Bourtange", description: "Een uniek historisch verdedigingswerk dat zijn gelijke niet kent. Stap terug in de tijd.", category: "bezienswaardigheid", distance: 10, image: "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp" },
-    { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied, ideaal voor een rustige wandeling in de natuur.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png" },
-    { id: "7", title: "Hunebedcentrum Borger", description: "Ontdek de wereld van de hunebedbouwers en bekijk het grootste hunebed van Nederland.", category: "bezienswaardigheid", distance: 32, image: "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed-header2-1536x518.png" }
+    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Park vol dino's op ware grootte en een dinomuseum.", category: "attractie", distance: 10, image: "https://dinoparklandgoedtenaxx.nl/wp-content/uploads/2023/03/T-Rex-Dinopark-Tenaxx.jpg", url: "https://dinoparklandgoedtenaxx.nl/" },
+    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige bar op het park voor sport en een drankje.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/sportsbar-de-dribbel/dribbel-foto.jpg", url: "https://www.sportplazavlagtwedde.nl/sportsbar-de-dribbel/" },
+    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in het hart van Emmen.", category: "idee", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen.png", url: "https://winkelcentrumdeweiert.nl/" },
+    { id: "4", title: "Wildlands Adventure Zoo", description: "Ontdek de werelden Jungola, Serenga en Nortica.", category: "attractie", distance: 30, image: "https://www.wildlands.nl/uploads/Wildlands_safari_1280x720.jpg", url: "https://www.wildlands.nl/" },
+    { id: "5", title: "Vestingdorp Bourtange", description: "Stap terug in de tijd in deze unieke historische vesting.", category: "bezienswaardigheid", distance: 10, image: "https://www.bourtange.nl/uploads/Vesting_Bourtange_Lucht.jpg", url: "https://www.bourtange.nl/" },
+    { id: "6", title: "Liefstinghsbroek", description: "Prachtig oud bosgebied voor een natuurwandeling.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/header.png", url: "https://www.staatsbosbeheer.nl/natuurgebieden/westerwolde" },
+    { id: "7", title: "Hunebedcentrum Borger", description: "Bekijk het grootste hunebed van Nederland.", category: "bezienswaardigheid", distance: 32, image: "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed.png", url: "https://www.hunebedcentrum.eu/" }
   ];
 
   const BINGO_ITEMS = [
-    { id: 1, text: "Rudi zegt: 'Dit is het laatste jaar dat ik mee ga'" },
-    { id: 2, text: "Iemand klaagt dat een ander te lang op de wc zit" },
-    { id: 3, text: "Er wordt een stinkscheet gelaten" },
-    { id: 4, text: "Harry doet even z'n ogen dicht op de bank" },
-    { id: 5, text: "Anouk zakt door een stoel" },
-    { id: 6, text: "Er valt een kind uit bed" },
-    { id: 7, text: "🎯 Nog te bedenken..." },
-    { id: 8, text: "🎯 Nog te bedenken..." },
-    { id: 9, text: "🎯 Nog te bedenken..." }
+    "Rudi zegt: 'Laatste jaar!'", "Te lang op de wc", "Stinkscheet gelaten", 
+    "Harry slaapt op de bank", "Anouk zakt door stoel", "Kind valt uit bed",
+    "Iemand zoekt z'n bril", "Paasei al gesmolten", "Valse bingo!"
   ];
 
   let currentFilter = 'alle';
-  let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
+  let bingoState = JSON.parse(localStorage.getItem('bingo_v2') || '[]');
 
-  function travelTime(d) {
-    if (d <= 2) return Math.round(d * 2);
-    if (d <= 15) return Math.round(d * 1.5);
-    return Math.round(d * 1.2);
+  // SORTEREN: Verste afstand bovenaan (Descending)
+  const sortedActivities = [...ACTIVITIES].sort((a, b) => b.distance - a.distance);
+
+  function openMaps(destination) {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination + " Vlagtwedde")}`;
+    window.open(url, '_blank');
   }
 
   function renderActivities() {
     const grid = document.getElementById('activitiesGrid');
-    const items = currentFilter === 'alle' ? ACTIVITIES : ACTIVITIES.filter(a => a.category === currentFilter);
-    grid.innerHTML = items.map(a => `
+    const filtered = currentFilter === 'alle' ? sortedActivities : sortedActivities.filter(a => a.category === currentFilter);
+    
+    grid.innerHTML = filtered.map(a => `
       <div class="activity-card">
         <div class="card-image-wrap">
-          <img src="${a.image}">
-          <div class="card-badge-top"><span class="badge badge-${a.category}">${a.category}</span></div>
+          <img src="${a.image}" alt="${a.title}">
+          <div class="card-badge-top"><span class="badge">${a.category}</span></div>
           <div class="card-badge-bottom">
-            <div class="meta-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--orange)"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> ${a.distance} km</div>
-            <div class="meta-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#2563eb"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg> ± ${travelTime(a.distance)} min</div>
+            <div class="meta-pill" onclick="openMaps('${a.title}')">📍 ${a.distance} km</div>
+            <div class="meta-pill" onclick="openMaps('${a.title}')">🕒 ± ${Math.round(a.distance * 1.5)} min</div>
           </div>
         </div>
         <div class="card-body">
           <h3 class="card-title">${a.title}</h3>
           <p class="card-desc">${a.description}</p>
+          <a href="${a.url}" target="_blank" class="btn btn-primary">Bezoek website</a>
         </div>
       </div>
     `).join('');
@@ -265,56 +162,34 @@
 
   function renderBingo() {
     const grid = document.getElementById('bingoGrid');
-    const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
-    document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
-    grid.innerHTML = BINGO_ITEMS.map(item => `
-      <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
-        <span class="bingo-text">${item.text}</span>
-        <span class="bingo-check">✔️</span>
+    grid.innerHTML = BINGO_ITEMS.map((text, i) => `
+      <div class="bingo-item ${bingoState.includes(i) ? 'checked' : ''}" onclick="toggleBingo(${i})">
+        ${text}
       </div>
     `).join('');
-    if(checkedCount === 9) document.getElementById('winOverlay').classList.add('visible');
   }
 
-  function toggleBingo(id) {
-    bingoState[id] = !bingoState[id];
-    localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
-    if(bingoState[id]) spawnEggs();
+  function toggleBingo(i) {
+    if(bingoState.includes(i)) bingoState = bingoState.filter(item => item !== i);
+    else bingoState.push(i);
+    localStorage.setItem('bingo_v2', JSON.stringify(bingoState));
     renderBingo();
   }
 
-  function spawnEggs() {
-    const emojis = ['🥚', '🐣', '🌸', '🐰'];
-    for(let i=0; i<12; i++) {
-      const egg = document.createElement('div');
-      egg.className = 'falling-egg';
-      egg.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      egg.style.left = Math.random() * 100 + 'vw';
-      egg.style.animationDuration = (Math.random() * 2 + 1) + 's';
-      document.body.appendChild(egg);
-      setTimeout(() => egg.remove(), 3000);
-    }
-  }
-
-  function openModal(id) { document.getElementById(id).classList.add('visible'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
-
   async function fetchWeather() {
     try {
-      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=4');
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=53.02&longitude=7.11&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max&timezone=Europe%2FAmsterdam&forecast_days=4');
       const data = await res.json();
-      const WMO = { 0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 45:'🌫️', 61:'🌧️', 80:'🌦️', 95:'⛈️' };
-      document.getElementById('wIcon').textContent = WMO[data.current.weathercode] || '⛅';
       document.getElementById('wTemp').textContent = Math.round(data.current.temperature_2m) + '°';
-      const daysNL = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+      const WMO = { 0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 61:'🌧️' };
       document.getElementById('weatherDays').innerHTML = data.daily.time.map((t, i) => `
         <div class="weather-day ${i===0?'today':''}">
-          <div class="wd-name">${i===0?'NU':daysNL[new Date(t).getDay()]}</div>
-          <div class="wd-icon">${WMO[data.daily.weathercode[i]] || '⛅'}</div>
-          <div class="wd-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
+          <div style="font-size:0.6rem;">${new Date(t).toLocaleDateString('nl-NL', {weekday:'short'})}</div>
+          <div style="font-size:1.2rem; margin:0.2rem 0;">${WMO[data.daily.weathercode[i]] || '⛅'}</div>
+          <div style="font-weight:900;">${Math.round(data.daily.temperature_2m_max[i])}°</div>
         </div>
       `).join('');
-    } catch(e) { console.error("Weer kon niet laden"); }
+    } catch(e) {}
   }
 
   function setFilter(cat, btn) {
@@ -324,10 +199,12 @@
     renderActivities();
   }
 
+  function openModal(id) { document.getElementById(id).classList.add('visible'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+
   renderActivities();
   renderBingo();
   fetchWeather();
 </script>
-
 </body>
 </html>
