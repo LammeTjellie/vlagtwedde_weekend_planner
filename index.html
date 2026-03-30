@@ -311,11 +311,6 @@
       transition: all 0.5s;
     }
 
-    .activity-card:hover {
-      box-shadow: 0 20px 40px rgba(28, 25, 23, 0.08);
-      transform: translateY(-2px);
-    }
-
     .card-image-wrap {
       aspect-ratio: 16/10;
       overflow: hidden;
@@ -328,8 +323,6 @@
       object-fit: cover;
       transition: transform 0.7s;
     }
-
-    .activity-card:hover .card-image-wrap img { transform: scale(1.05); }
 
     .card-badge-top {
       position: absolute;
@@ -543,11 +536,104 @@
 
     /* FADE IN */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .activity-card { animation: fadeUp 0.4s ease both; }
+
+    @media (hover: hover) {
+      .activity-card:hover {
+        box-shadow: 0 20px 40px rgba(28, 25, 23, 0.08);
+        transform: translateY(-2px);
+      }
+      .activity-card:hover .card-image-wrap img { transform: scale(1.05); }
+    }
+
+    /* WEATHER WIDGET */
+    .weather-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: white;
+      border: 1px solid var(--stone-200);
+      border-radius: 9999px;
+      padding: 0.5rem 1rem 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .weather-bar:hover { background: var(--stone-100); }
+    .weather-bar .w-icon { font-size: 1.2rem; line-height: 1; }
+    .weather-bar .w-temp { color: var(--stone-900); }
+    .weather-bar .w-label { color: var(--stone-400); font-weight: 500; font-size: 0.75rem; }
+
+    .weather-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(28,25,23,0.4);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    @media (min-width: 480px) { .weather-modal { align-items: center; } }
+    .weather-modal.visible { opacity: 1; pointer-events: auto; }
+
+    .weather-panel {
+      background: var(--stone-900);
+      color: white;
+      border-radius: 2rem;
+      padding: 1.75rem;
+      max-width: 420px;
+      width: 100%;
+      transform: translateY(30px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+    .weather-modal.visible .weather-panel { transform: translateY(0); }
+
+    .weather-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .weather-panel-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; }
+    .weather-panel-close {
+      width: 2rem; height: 2rem;
+      border-radius: 50%;
+      background: #292524;
+      border: none;
+      color: #a8a29e;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    .weather-panel-close:hover { background: #333; }
+
+    .weather-days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+
+    .weather-day {
+      background: #292524;
+      border-radius: 1rem;
+      padding: 1rem 0.75rem;
+      text-align: center;
+    }
+    .weather-day .wd-name { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #a8a29e; margin-bottom: 0.5rem; }
+    .weather-day .wd-icon { font-size: 2rem; margin-bottom: 0.5rem; line-height: 1; }
+    .weather-day .wd-temp { font-size: 1.1rem; font-weight: 900; }
+    .weather-day .wd-desc { font-size: 0.65rem; color: #a8a29e; margin-top: 0.25rem; line-height: 1.3; }
+    .weather-day .wd-minmax { font-size: 0.7rem; color: #78716c; margin-top: 0.4rem; }
+    .weather-day.today { background: var(--orange); }
+    .weather-day.today .wd-name, .weather-day.today .wd-desc, .weather-day.today .wd-minmax { color: rgba(255,255,255,0.75); }
   </style>
 </head>
 <body>
@@ -567,6 +653,11 @@
         <button class="btn" id="bingoToggle" onclick="toggleBingo()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
           Bingo
+        </button>
+        <button class="weather-bar" id="weatherBar" onclick="openWeather()">
+          <span class="w-icon" id="wIcon">⛅</span>
+          <span class="w-temp" id="wTemp">--°</span>
+          <span class="w-label">Vlagtwedde</span>
         </button>
       </div>
     </div>
@@ -613,6 +704,21 @@
 </footer>
 
 
+
+<!-- WEATHER MODAL -->
+<div class="weather-modal" id="weatherModal" onclick="if(event.target===this)closeWeather()">
+  <div class="weather-panel">
+    <div class="weather-panel-header">
+      <div class="weather-panel-title">Weer in Vlagtwedde</div>
+      <button class="weather-panel-close" onclick="closeWeather()">✕</button>
+    </div>
+    <div class="weather-days" id="weatherDays">
+      <div class="weather-day today"><div class="wd-name">Laden...</div><div class="wd-icon">⏳</div><div class="wd-temp">--°</div></div>
+      <div class="weather-day"><div class="wd-name">Laden...</div><div class="wd-icon">⏳</div><div class="wd-temp">--°</div></div>
+      <div class="weather-day"><div class="wd-name">Laden...</div><div class="wd-icon">⏳</div><div class="wd-temp">--°</div></div>
+    </div>
+  </div>
+</div>
 
 <script>
   // ── DATA ──────────────────────────────────────────────────────────────
@@ -668,7 +774,7 @@
   }
 
   // ── RENDER ────────────────────────────────────────────────────────────
-  function renderActivities() {
+  function renderActivities(animate = true) {
     const grid = document.getElementById('activitiesGrid');
     const empty = document.getElementById('emptyState');
     let items = [...ACTIVITIES].sort((a, b) => a.distance - b.distance);
@@ -682,7 +788,7 @@
 
     empty.classList.add('hidden');
     grid.innerHTML = items.map((a, i) => `
-      <div class="activity-card" style="animation-delay:${i * 0.05}s">
+      <div class="activity-card" style="${animate ? `animation-delay:${i * 0.05}s` : 'animation:none'}">
         <div class="card-image-wrap">
           <img src="${a.image || `https://picsum.photos/seed/${a.id}/800/500`}" alt="${a.title}" referrerpolicy="no-referrer" onerror="this.src='https://picsum.photos/seed/${a.id}/800/500'">
           <div class="card-badge-top">
@@ -758,14 +864,81 @@
   function closeModal() { }
   function submitPassword() { }
 
-  // Close modal on overlay click
-  document.getElementById('modalOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
+  // ── WEATHER ───────────────────────────────────────────────────────────
+  const WMO = {
+    0:'☀️',1:'🌤️',2:'⛅',3:'☁️',
+    45:'🌫️',48:'🌫️',
+    51:'🌦️',53:'🌦️',55:'🌧️',
+    61:'🌧️',63:'🌧️',65:'🌧️',
+    71:'🌨️',73:'🌨️',75:'❄️',
+    80:'🌦️',81:'🌧️',82:'⛈️',
+    95:'⛈️',96:'⛈️',99:'⛈️'
+  };
+  const WMO_DESC = {
+    0:'Helder',1:'Licht bewolkt',2:'Half bewolkt',3:'Bewolkt',
+    45:'Mist',48:'Mist',
+    51:'Lichte motregen',53:'Motregen',55:'Zware motregen',
+    61:'Lichte regen',63:'Regen',65:'Zware regen',
+    71:'Lichte sneeuw',73:'Sneeuw',75:'Zware sneeuw',
+    80:'Regenbuien',81:'Zware buien',82:'Stortbuien',
+    95:'Onweer',96:'Onweer met hagel',99:'Zwaar onweer'
+  };
+  const DAYS_NL = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+
+  let weatherData = null;
+
+  async function fetchWeather() {
+    try {
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=3';
+      const res = await fetch(url);
+      const data = await res.json();
+      weatherData = data;
+
+      const code = data.current.weathercode;
+      const temp = Math.round(data.current.temperature_2m);
+      document.getElementById('wIcon').textContent = WMO[code] || '🌡️';
+      document.getElementById('wTemp').textContent = `${temp}°`;
+    } catch(e) {
+      document.getElementById('wTemp').textContent = '?°';
+    }
+  }
+
+  function openWeather() {
+    document.getElementById('weatherModal').classList.add('visible');
+    if (!weatherData) { fetchWeather().then(renderWeatherDays); return; }
+    renderWeatherDays();
+  }
+
+  function closeWeather() {
+    document.getElementById('weatherModal').classList.remove('visible');
+  }
+
+  function renderWeatherDays() {
+    if (!weatherData) return;
+    const d = weatherData.daily;
+    const days = document.getElementById('weatherDays');
+    days.innerHTML = [0,1,2].map(i => {
+      const date = new Date(d.time[i]);
+      const name = i === 0 ? 'Vandaag' : DAYS_NL[date.getDay()];
+      const icon = WMO[d.weathercode[i]] || '🌡️';
+      const desc = WMO_DESC[d.weathercode[i]] || '';
+      const max = Math.round(d.temperature_2m_max[i]);
+      const min = Math.round(d.temperature_2m_min[i]);
+      return `
+        <div class="weather-day ${i===0?'today':''}">
+          <div class="wd-name">${name}</div>
+          <div class="wd-icon">${icon}</div>
+          <div class="wd-temp">${max}°</div>
+          <div class="wd-desc">${desc}</div>
+          <div class="wd-minmax">↑${max}° ↓${min}°</div>
+        </div>`;
+    }).join('');
+  }
 
   // ── INIT ──────────────────────────────────────────────────────────────
-  renderActivities();
+  renderActivities(false);
   renderBingo();
+  fetchWeather();
 </script>
 </body>
 </html>
