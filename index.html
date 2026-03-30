@@ -1,16 +1,768 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="manifest" href="/manifest.json" />
-    <title>Weekend Planner Vlagtwedde</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Weekend Planner Vlagtwedde</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg: #fdfcf9;
+      --stone-100: #f5f5f0;
+      --stone-200: #e7e5e0;
+      --stone-400: #a8a29e;
+      --stone-500: #78716c;
+      --stone-900: #1c1917;
+      --orange: #ea580c;
+      --orange-light: #fff7ed;
+      --emerald: #065f46;
+      --emerald-bg: #d1fae5;
+      --blue: #1e40af;
+      --blue-bg: #dbeafe;
+      --purple: #6b21a8;
+      --purple-bg: #f3e8ff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--stone-900);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      position: relative;
+      overflow: hidden;
+      padding: 4rem 1.5rem 3rem;
+      border-bottom: 1px solid var(--stone-200);
+    }
+
+    .header-inner {
+      max-width: 1024px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-top {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .header-top { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+    }
+
+    .header-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--stone-400);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      line-height: 1.1;
+      color: var(--stone-900);
+      font-style: italic;
+    }
+
+    h1 span {
+      font-style: normal;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--orange);
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border: 1px solid var(--stone-200);
+      background: white;
+      color: var(--stone-900);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: var(--stone-100); }
+    .btn-icon { padding: 0.75rem; border-radius: 9999px; }
+    .btn-active { background: var(--orange) !important; border-color: var(--orange) !important; color: white !important; }
+
+    .btn svg { width: 1rem; height: 1rem; }
+
+    /* FILTERS */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border: 1px solid var(--stone-200);
+      background: white;
+      color: var(--stone-500);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-btn:hover { border-color: var(--stone-400); }
+    .filter-btn.active { background: var(--stone-900); border-color: var(--stone-900); color: white; }
+
+    /* BG DECO */
+    .header-deco {
+      position: absolute;
+      top: 0; right: 0;
+      width: 33%;
+      height: 100%;
+      background: rgba(255, 247, 237, 0.5);
+      transform: skewX(-12deg) translateX(50%);
+      pointer-events: none;
+    }
+
+    /* MAIN */
+    main { max-width: 1024px; margin: 0 auto; padding: 3rem 1.5rem; }
+
+    /* BINGO */
+    .bingo-section {
+      margin-bottom: 3rem;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .bingo-section.hidden { display: none; }
+
+    .bingo-card {
+      background: var(--stone-900);
+      color: white;
+      padding: 2rem;
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    .bingo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .bingo-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-style: italic;
+      margin-bottom: 0.25rem;
+    }
+
+    .bingo-subtitle { color: #a8a29e; font-size: 0.875rem; }
+
+    .bingo-score {
+      background: var(--orange);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    .bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 640px) { .bingo-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .bingo-item {
+      padding: 1rem;
+      border-radius: 1rem;
+      text-align: left;
+      font-size: 0.875rem;
+      transition: all 0.3s;
+      border: 2px solid #292524;
+      background: #292524;
+      color: #d6d3d1;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .bingo-item:hover { border-color: #57534e; }
+
+    .bingo-item.checked {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: white;
+      transform: translateY(2px);
+    }
+
+    .bingo-dot {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      border: 2px solid #57534e;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .bingo-item.checked .bingo-dot { background: white; border-color: white; }
+
+    /* ACTIVITIES GRID */
+    .activities-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 640px) { .activities-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .activity-card {
+      background: white;
+      border: 1px solid var(--stone-200);
+      border-radius: 2rem;
+      overflow: hidden;
+      transition: all 0.5s;
+    }
+
+    .activity-card:hover {
+      box-shadow: 0 20px 40px rgba(28, 25, 23, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .card-image-wrap {
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s;
+    }
+
+    .activity-card:hover .card-image-wrap img { transform: scale(1.05); }
+
+    .card-badge-top {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      padding: 0.2rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid;
+    }
+
+    .badge-bezienswaardigheid { background: var(--emerald-bg); color: var(--emerald); border-color: #a7f3d0; }
+    .badge-attractie { background: var(--blue-bg); color: var(--blue); border-color: #bfdbfe; }
+    .badge-activiteit { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .badge-idee { background: var(--purple-bg); color: var(--purple); border-color: #e9d5ff; }
+
+    .card-badge-bottom {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .meta-pill {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(4px);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--stone-900);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .meta-pill svg { width: 0.75rem; height: 0.75rem; }
+    .meta-pill .icon-orange { color: var(--orange); }
+    .meta-pill .icon-blue { color: #2563eb; }
+
+    .card-body { padding: 2rem; }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--stone-900);
+    }
+
+    .card-desc {
+      color: var(--stone-500);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--stone-900);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .card-link:hover { color: var(--orange); }
+    .card-link svg { width: 1rem; height: 1rem; transition: transform 0.2s; }
+    .card-link:hover svg { transform: translateX(3px); }
+
+    /* EMPTY STATE */
+    .empty-state {
+      padding: 6rem 0;
+      text-align: center;
+    }
+
+    .empty-icon {
+      display: inline-flex;
+      padding: 1.5rem;
+      background: var(--stone-100);
+      border-radius: 50%;
+      margin-bottom: 1rem;
+    }
+
+    .empty-icon svg { width: 2rem; height: 2rem; color: var(--stone-400); }
+    .empty-text { color: var(--stone-400); font-family: 'Playfair Display', serif; font-style: italic; }
+
+    /* FOOTER */
+    footer {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      border-top: 1px solid var(--stone-100);
+      text-align: center;
+    }
+
+    footer p {
+      font-size: 0.7rem;
+      color: var(--stone-400);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 700;
+    }
+
+    /* PASSWORD MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: rgba(28,25,23,0.4);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    .modal {
+      background: white;
+      padding: 2rem;
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+      max-width: 360px;
+      width: 100%;
+      transform: scale(0.9);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.visible .modal { transform: scale(1); }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background: var(--stone-100);
+      border: 1px solid var(--stone-100);
+      border-radius: 1rem;
+      font-size: 1rem;
+      text-align: center;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(234,88,12,0.1); }
+    .modal-input.error { border-color: #ef4444; }
+
+    .modal-error { font-size: 0.75rem; color: #ef4444; text-align: center; font-weight: 700; margin-bottom: 1rem; min-height: 1rem; }
+
+    .modal-buttons { display: flex; gap: 0.75rem; }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 1rem;
+      border-radius: 1rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      border: none;
+      background: none;
+      color: var(--stone-400);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-cancel:hover { background: var(--stone-100); }
+
+    .btn-submit {
+      flex: 1;
+      padding: 1rem;
+      border-radius: 1rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      border: none;
+      background: var(--stone-900);
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover { background: #292524; }
+
+    /* FADE IN */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .activity-card { animation: fadeUp 0.4s ease both; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="header-eyebrow">Paasweekend 2026</div>
+        <h1>Vlagtwedde<br><span>Weekend Planner</span></h1>
+      </div>
+      <div class="header-actions">
+        <a href="https://media.summio.nl/emslandermeer/index.html" target="_blank" rel="noopener" class="btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7M9 20l6-3M9 20V7m6 13l4.553 2.276A1 1 0 0021 21.382V10.618a1 1 0 00-.553-.894L15 7m0 13V7M9 7l6-3"/></svg>
+          <span style="color:var(--orange)">●</span> Plattegrond
+        </a>
+        <button class="btn" id="bingoToggle" onclick="toggleBingo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          Bingo
+        </button>
+        <button class="btn btn-icon" id="adminBtn" onclick="showPasswordModal()" title="Admin Mode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="filters" id="filters">
+      <button class="filter-btn active" onclick="setFilter('alle', this)">Alles</button>
+      <button class="filter-btn" onclick="setFilter('bezienswaardigheid', this)">Bezienswaardigheid</button>
+      <button class="filter-btn" onclick="setFilter('attractie', this)">Attractie</button>
+      <button class="filter-btn" onclick="setFilter('activiteit', this)">Activiteit</button>
+      <button class="filter-btn" onclick="setFilter('idee', this)">Idee</button>
+    </div>
+  </div>
+  <div class="header-deco"></div>
+</header>
+
+<main>
+  <!-- BINGO -->
+  <div class="bingo-section hidden" id="bingoSection">
+    <div class="bingo-card">
+      <div class="bingo-header">
+        <div>
+          <div class="bingo-title">Familie Weekend Bingo</div>
+          <div class="bingo-subtitle">Wie heeft als eerste een volle kaart? (Of een volle blaas van het lachen)</div>
+        </div>
+        <div class="bingo-score" id="bingoScore">0 / 9</div>
+      </div>
+      <div class="bingo-grid" id="bingoGrid"></div>
+    </div>
+  </div>
+
+  <!-- ACTIVITIES -->
+  <div class="activities-grid" id="activitiesGrid"></div>
+  <div class="empty-state hidden" id="emptyState">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7 7-7z"/></svg>
+    </div>
+    <p class="empty-text">Geen activiteiten gevonden in deze categorie.</p>
+  </div>
+</main>
+
+<footer>
+  <p>Summio Emslandermeer &bull; Vlagtwedde &bull; 2026</p>
+</footer>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">Admin Toegang</div>
+    <input type="password" class="modal-input" id="passwordInput" placeholder="Wachtwoord..." onkeydown="if(event.key==='Enter') submitPassword()">
+    <div class="modal-error" id="passwordError"></div>
+    <div class="modal-buttons">
+      <button class="btn-cancel" onclick="closeModal()">Annuleren</button>
+      <button class="btn-submit" onclick="submitPassword()">Inloggen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── DATA ──────────────────────────────────────────────────────────────
+  const ACTIVITIES = [
+    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum, een binnenspeeltuin en meer.", url: "https://www.dinoparklandgoedtenaxx.nl/", distance: 10, category: "attractie", image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp" },
+    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", url: "", distance: 1, category: "activiteit", image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp" },
+    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", url: "https://www.deweiert.nl/", distance: 30, category: "idee", image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png" },
+    { id: "4", title: "Wildlands Dierentuin Emmen", description: "Een uniek avonturenpark met drie verschillende werelden: Jungola, Serenga en Nortica.", url: "https://www.wildlands.nl/", distance: 30, category: "attractie", image: "https://www.wildlands.nl/image.php?file=/uploads/Wildlands_safari_neushoorns_1280x720_17623.jpg&width=1280&factor=0.56&signature=9df5d6df" },
+    { id: "5", title: "Vestingdorp Bourtange", description: "Een uniek historisch verdedigingswerk dat zijn gelijke niet kent. Stap terug in de tijd.", url: "https://www.bourtange.nl/", distance: 10, category: "bezienswaardigheid", image: "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp" },
+    { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied, ideaal voor een rustige wandeling in de natuur.", url: "", distance: 2, category: "bezienswaardigheid", image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png" },
+    { id: "7", title: "Hunebedcentrum Borger", description: "Ontdek de wereld van de hunebedbouwers en bekijk het grootste hunebed van Nederland.", url: "https://www.hunebedcentrum.eu/", distance: 32, category: "bezienswaardigheid", image: "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed-header2-1536x518.png" }
+  ];
+
+  const BINGO_ITEMS = [
+    { id: 1, text: "Iemand vergeet de eieren" },
+    { id: 2, text: "Opa valt in slaap in de stoel" },
+    { id: 3, text: "Discussie over de route" },
+    { id: 4, text: "Iemand zegt: 'Het is hier wel mooi hè?'" },
+    { id: 5, text: "De hond steelt paasontbijt" },
+    { id: 6, text: "Iemand klaagt over de kou" },
+    { id: 7, text: "Er wordt vals gespeeld met een spelletje" },
+    { id: 8, text: "Iemand vraagt: 'Wat gaan we eten?'" },
+    { id: 9, text: "De plattegrond wordt ondersteboven gehouden" }
+  ];
+
+  // ── STATE ─────────────────────────────────────────────────────────────
+  let currentFilter = 'alle';
+  let bingoState = JSON.parse(localStorage.getItem('bingo') || '{}');
+  let isAdmin = false;
+  let bingoVisible = false;
+
+  // ── HELPERS ───────────────────────────────────────────────────────────
+  function travelTime(d) {
+    if (d <= 2) return Math.round(d * 2);
+    if (d <= 15) return Math.round(d * 1.5);
+    return Math.round(d * 1.2);
+  }
+
+  function mapsUrl(title) {
+    return `https://www.google.com/maps/dir/Summio+Villapark+Emslandermeer,+Vlagtwedde/${encodeURIComponent(title)}`;
+  }
+
+  function chevron() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>`;
+  }
+
+  function pinIcon(cls) {
+    return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`;
+  }
+
+  function carIcon() {
+    return `<svg class="icon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`;
+  }
+
+  // ── RENDER ────────────────────────────────────────────────────────────
+  function renderActivities() {
+    const grid = document.getElementById('activitiesGrid');
+    const empty = document.getElementById('emptyState');
+    let items = [...ACTIVITIES].sort((a, b) => a.distance - b.distance);
+    if (currentFilter !== 'alle') items = items.filter(a => a.category === currentFilter);
+
+    if (items.length === 0) {
+      grid.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    empty.classList.add('hidden');
+    grid.innerHTML = items.map((a, i) => `
+      <div class="activity-card" style="animation-delay:${i * 0.05}s">
+        <div class="card-image-wrap">
+          <img src="${a.image || `https://picsum.photos/seed/${a.id}/800/500`}" alt="${a.title}" referrerpolicy="no-referrer" onerror="this.src='https://picsum.photos/seed/${a.id}/800/500'">
+          <div class="card-badge-top">
+            <span class="badge badge-${a.category}">${a.category}</span>
+          </div>
+          <div class="card-badge-bottom">
+            <div class="meta-pill">${pinIcon('icon-orange')} ${a.distance} km</div>
+            <div class="meta-pill">${carIcon()} ± ${travelTime(a.distance)} min</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <h3 class="card-title">${a.title}</h3>
+          </div>
+          <p class="card-desc">${a.description}</p>
+          <div class="card-links">
+            ${a.url ? `<a href="${a.url}" target="_blank" rel="noopener" class="card-link">Bekijk Website ${chevron()}</a>` : ''}
+            <a href="${mapsUrl(a.title)}" target="_blank" rel="noopener" class="card-link">Bekijk Route ${pinIcon('')}</a>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderBingo() {
+    const grid = document.getElementById('bingoGrid');
+    const score = document.getElementById('bingoScore');
+    const checked = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
+    score.textContent = `${checked} / ${BINGO_ITEMS.length}`;
+
+    grid.innerHTML = BINGO_ITEMS.map(item => `
+      <button class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
+        <div class="bingo-dot">
+          ${bingoState[item.id] ? `<svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="3" width="12" height="12"><path d="M20 6L9 17l-5-5"/></svg>` : ''}
+        </div>
+        ${item.text}
+      </button>
+    `).join('');
+  }
+
+  // ── INTERACTIONS ──────────────────────────────────────────────────────
+  function setFilter(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderActivities();
+  }
+
+  let bingoSectionVisible = false;
+
+  function toggleBingo(id) {
+    if (id !== undefined) {
+      // Toggle bingo item
+      bingoState[id] = !bingoState[id];
+      localStorage.setItem('bingo', JSON.stringify(bingoState));
+      renderBingo();
+      return;
+    }
+    // Toggle section visibility
+    bingoSectionVisible = !bingoSectionVisible;
+    const section = document.getElementById('bingoSection');
+    const btn = document.getElementById('bingoToggle');
+    section.classList.toggle('hidden', !bingoSectionVisible);
+    btn.classList.toggle('btn-active', bingoSectionVisible);
+  }
+
+  function showPasswordModal() {
+    if (isAdmin) {
+      isAdmin = false;
+      document.getElementById('adminBtn').querySelector('svg').style.color = '';
+      return;
+    }
+    document.getElementById('modalOverlay').classList.add('visible');
+    setTimeout(() => document.getElementById('passwordInput').focus(), 100);
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordError').textContent = '';
+    document.getElementById('passwordInput').classList.remove('error');
+  }
+
+  function submitPassword() {
+    const val = document.getElementById('passwordInput').value;
+    if (val === 'ditishetlaatstejaar') {
+      isAdmin = true;
+      document.getElementById('adminBtn').querySelector('svg').style.color = 'var(--orange)';
+      closeModal();
+    } else {
+      document.getElementById('passwordError').textContent = 'Fout wachtwoord!';
+      document.getElementById('passwordInput').classList.add('error');
+      document.getElementById('passwordInput').value = '';
+    }
+  }
+
+  // Close modal on overlay click
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── INIT ──────────────────────────────────────────────────────────────
+  renderActivities();
+  renderBingo();
+</script>
+</body>
+</html>
