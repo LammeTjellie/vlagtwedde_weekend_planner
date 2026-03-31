@@ -68,6 +68,53 @@
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
     .modal-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; }
     .modal-close { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #292524; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+    
+    /* --- WOORDZOEKER CSS --- */
+    .ws-grid { 
+        display: grid; 
+        grid-template-columns: repeat(12, 1fr); 
+        gap: 0; 
+        background: #3f3a36; 
+        padding: 2px; 
+        border-radius: 0.75rem; 
+        margin-bottom: 1rem; 
+        touch-action: none; 
+        position: relative;
+        user-select: none;
+        overflow: hidden;
+    }
+    .ws-cell { 
+        aspect-ratio: 1; 
+        background: #292524; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 0.8rem; 
+        font-weight: 900; 
+        text-transform: uppercase; 
+        color: #d6d3d1;
+        position: relative;
+        z-index: 2;
+        border: 0.1px solid rgba(255,255,255,0.02);
+    }
+    .ws-cell.highlighted { background: rgba(234, 88, 12, 0.4); }
+    .ws-cell.found-cell { color: var(--easter-green); }
+
+    .word-line {
+        position: absolute;
+        height: 3px;
+        background: var(--easter-green);
+        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        z-index: 5;
+        pointer-events: none;
+        transform-origin: left center;
+        border-radius: 2px;
+    }
+    .ws-words { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    .ws-word { font-size: 0.65rem; padding: 0.2rem 0.5rem; background: #292524; border: 1px solid #3f3a36; border-radius: 999px; color: #a8a29e; }
+    .ws-word.found { background: var(--easter-green); color: #065f46; text-decoration: line-through; border-color: transparent; }
+    /* ---------------------- */
+
     .bingo-letters { display: flex; justify-content: space-between; background: var(--orange); border-radius: 1rem; padding: 0.6rem 1.5rem; margin-bottom: 0.75rem; font-weight: 900; font-size: 1.2rem; letter-spacing: 0.2em; }
     .bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; }
     .bingo-item { aspect-ratio: 1; padding: 0.5rem; border-radius: 1rem; background: #292524; border: 2px solid #3f3a36; color: #d6d3d1; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
@@ -75,6 +122,7 @@
     .bingo-item .bingo-check { position: absolute; font-size: 2rem; opacity: 0; transform: scale(0.5); transition: all 0.3s; }
     .bingo-item.checked .bingo-check { opacity: 1; transform: scale(1); }
     .bingo-item.checked .bingo-text { opacity: 0.2; }
+    
     .weather-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
     .weather-day { background: #292524; border-radius: 1rem; padding: 0.75rem 0.25rem; text-align: center; }
     .weather-day.today { background: var(--orange); }
@@ -82,9 +130,11 @@
     .weather-day.today .wd-name { color: white; }
     .wd-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
     .wd-temp { font-size: 0.9rem; font-weight: 900; }
+    
     .win-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 2rem; text-align: center; backdrop-filter: blur(10px); }
     .win-overlay.visible { display: flex; }
     .win-overlay img { max-width: 80%; border-radius: 2rem; margin-bottom: 2rem; border: 3px solid var(--orange); }
+    
     @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     .falling-egg { position: fixed; top: -50px; z-index: 999; font-size: 2rem; pointer-events: none; animation: fall linear forwards; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -101,6 +151,7 @@
         <h1>Vlagtwedde<br><span>Weekend Planner</span></h1>
       </div>
       <div class="header-actions">
+        <button class="btn" onclick="openModal('wsModal')">🧩 Woordzoeker</button>
         <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
         <button class="btn" onclick="openModal('weatherModal')">
           <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
@@ -121,6 +172,18 @@
 <main>
   <div class="activities-grid" id="activitiesGrid"></div>
 </main>
+
+<div class="modal-overlay" id="wsModal" onclick="if(event.target===this)closeModal('wsModal')">
+  <div class="modal-panel" style="max-width: 500px;">
+    <div class="modal-header">
+      <div class="modal-title">Paas Woordzoeker 🧩</div>
+      <button class="modal-close" onclick="closeModal('wsModal')">✕</button>
+    </div>
+    <p style="font-size:0.7rem; color:var(--stone-400); margin-bottom:1rem; text-align:center;">Sleep over de letters om woorden te vinden.</p>
+    <div class="ws-grid" id="wsGrid"></div>
+    <div class="ws-words" id="wsWords"></div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="bingoModal" onclick="if(event.target===this)closeModal('bingoModal')">
   <div class="modal-panel">
@@ -172,8 +235,9 @@
   // SOUNDS
   const soundLike = new Audio('thomasdislike.mp3');
   const soundDislike = new Audio('thomasdislike.mp3');
-  const soundBingoCheck = new Audio('bingocheck.mp3'); // Zorg dat dit bestand bestaat
-  const soundBingoWin = new Audio('bingowin.mp3');     // Zorg dat dit bestand bestaat
+  const soundBingoCheck = new Audio('bingocheck.mp3');
+  const soundBingoWin = new Audio('bingowin.mp3');
+  const soundWordFound = new Audio('bingocheck.mp3'); 
 
   const ACTIVITIES = [
     { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
@@ -198,6 +262,142 @@
     { id: 8, text: "Rudi zegt iets AARDIGS tegen Anouk" },
     { id: 9, text: "Iemand legt het paasverhaal uit" }
   ];
+
+  // --- WOORDZOEKER DATA & LOGICA ---
+  const WS_WORDS = ["ANOUK", "RIK", "FAE", "SIEM", "ELINE", "MENZO", "BRAM", "TYGO", "PETRA", "HARRY", "RUDI", "LINDA", "THOMAS", "PAASONTBIJT", "PAASEI", "VLAGTWEDDE", "PAASHAAS", "JEZUS", "CHOCOLADE"];
+  let wsGrid = [];
+  let foundWSWords = [];
+  let isDragging = false;
+  let startCell = null;
+
+  function initWordSearch() {
+    const size = 12;
+    wsGrid = Array(size).fill().map(() => Array(size).fill(''));
+    const directions = [[0,1], [0,-1], [1,0], [-1,0], [1,1], [1,-1], [-1,1], [-1,-1]];
+
+    [...WS_WORDS].sort((a,b) => b.length - a.length).forEach(word => {
+        let placed = false;
+        let attempts = 0;
+        while (!placed && attempts < 500) {
+            const dir = directions[Math.floor(Math.random() * directions.length)];
+            const r = Math.floor(Math.random() * size);
+            const c = Math.floor(Math.random() * size);
+            if (canPlace(word, r, c, dir, size)) {
+                for (let i = 0; i < word.length; i++) wsGrid[r + i * dir[0]][c + i * dir[1]] = word[i];
+                placed = true;
+            }
+            attempts++;
+        }
+    });
+
+    for(let r=0; r<size; r++) {
+        for(let c=0; c<size; c++) {
+            if(wsGrid[r][c] === '') wsGrid[r][c] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
+        }
+    }
+    renderWS();
+  }
+
+  function canPlace(word, r, c, dir, size) {
+    for (let i = 0; i < word.length; i++) {
+        const nr = r + i * dir[0], nc = c + i * dir[1];
+        if (nr < 0 || nr >= size || nc < 0 || nc >= size) return false;
+        if (wsGrid[nr][nc] !== '' && wsGrid[nr][nc] !== word[i]) return false;
+    }
+    return true;
+  }
+
+  function renderWS() {
+    const container = document.getElementById('wsGrid');
+    container.innerHTML = '';
+    foundWSWords = []; 
+    wsGrid.forEach((row, r) => row.forEach((letter, c) => {
+        const cell = document.createElement('div');
+        cell.className = 'ws-cell';
+        cell.textContent = letter;
+        cell.dataset.r = r; cell.dataset.c = c;
+        cell.addEventListener('mousedown', (e) => { e.preventDefault(); startSelect(r, c); });
+        cell.addEventListener('touchstart', (e) => { e.preventDefault(); startSelect(r, c); }, {passive: false});
+        cell.addEventListener('mouseenter', () => moveSelect(r, c));
+        container.appendChild(cell);
+    }));
+
+    container.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (el && el.classList.contains('ws-cell')) moveSelect(parseInt(el.dataset.r), parseInt(el.dataset.c));
+    }, {passive: false});
+
+    window.addEventListener('mouseup', endSelect);
+    window.addEventListener('touchend', endSelect);
+    document.getElementById('wsWords').innerHTML = WS_WORDS.map(w => `<span class="ws-word" id="ws-item-${w}">${w}</span>`).join('');
+  }
+
+  function startSelect(r, c) { isDragging = true; startCell = { r, c }; clearHighlight(); highlightCell(r, c); }
+  
+  function moveSelect(r, c) { 
+    if (!isDragging || (startCell.r === r && startCell.c === c)) return; 
+    clearHighlight(); 
+    const cells = getCellsBetween(startCell.r, startCell.c, r, c); 
+    cells.forEach(cell => highlightCell(cell.r, cell.c)); 
+  }
+  
+  function endSelect() {
+    if (!isDragging) return;
+    isDragging = false;
+    const highlighted = document.querySelectorAll('.ws-cell.highlighted');
+    if (highlighted.length < 2) { clearHighlight(); return; }
+
+    const word = Array.from(highlighted).map(el => el.textContent).join('');
+    const revWord = word.split('').reverse().join('');
+    
+    let foundMatch = null;
+    if (WS_WORDS.includes(word)) foundMatch = word;
+    else if (WS_WORDS.includes(revWord)) foundMatch = revWord;
+
+    if (foundMatch && !foundWSWords.includes(foundMatch)) {
+        foundWSWords.push(foundMatch);
+        soundWordFound.currentTime = 0; soundWordFound.play();
+        document.getElementById(`ws-item-${foundMatch}`).classList.add('found');
+        highlighted.forEach(el => el.classList.add('found-cell'));
+        drawWordLine(highlighted);
+    }
+    clearHighlight();
+  }
+
+  function getCellsBetween(r1, c1, r2, c2) {
+    const dr = r2 - r1, dc = c2 - c1, dist = Math.max(Math.abs(dr), Math.abs(dc));
+    if (dist === 0) return [];
+    const stepR = dr / dist, stepC = dc / dist;
+    if ((Math.abs(stepR) !== 1 && stepR !== 0) || (Math.abs(stepC) !== 1 && stepC !== 0)) return [];
+    
+    const cells = [];
+    for (let i = 0; i <= dist; i++) cells.push({ r: r1 + Math.round(i * stepR), c: c1 + Math.round(i * stepC) });
+    return cells;
+  }
+
+  function drawWordLine(elements) {
+    const first = elements[0], last = elements[elements.length - 1];
+    const grid = document.getElementById('wsGrid');
+    const x1 = first.offsetLeft + (first.offsetWidth / 2);
+    const y1 = first.offsetTop + (first.offsetHeight / 2);
+    const x2 = last.offsetLeft + (last.offsetWidth / 2);
+    const y2 = last.offsetTop + (last.offsetHeight / 2);
+    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+    const line = document.createElement('div');
+    line.className = 'word-line';
+    line.style.width = `${length}px`; 
+    line.style.left = `${x1}px`; 
+    line.style.top = `${y1}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+    grid.appendChild(line);
+  }
+
+  function highlightCell(r, c) { const el = document.querySelector(`[data-r="${r}"][data-c="${c}"]`); if (el) el.classList.add('highlighted'); }
+  function clearHighlight() { document.querySelectorAll('.ws-cell.highlighted').forEach(el => el.classList.remove('highlighted')); }
+  // --- EINDE WOORDZOEKER LOGICA ---
 
   let currentFilter = 'alle';
   let votesData = {};
@@ -231,7 +431,6 @@
       localStorage.setItem(userKey, type);
       if(type === 'up') soundLike.play(); else soundDislike.play();
     }
-
     await updateDoc(doc(db, "planner", "votes"), updates);
   };
 
@@ -244,7 +443,6 @@
       const up = votesData[`${a.id}_up`] || 0;
       const down = votesData[`${a.id}_down`] || 0;
       const myVote = localStorage.getItem(`voted_${a.id}`);
-      
       return `
       <div class="activity-card">
         <div class="card-image-wrap">
@@ -263,7 +461,6 @@
           <h3 class="card-title">${a.title}</h3>
           <p class="card-desc">${a.description}</p>
           <a href="${a.url}" target="_blank" class="btn btn-visit">Bezoek website</a>
-          
           <div class="vote-container">
             <button class="vote-btn ${myVote==='up'?'active-up':''}" onclick="handleVote('${a.id}', 'up')">
               👍 <span class="vote-count">${up}</span>
@@ -293,14 +490,11 @@
   window.toggleBingo = (id) => {
     bingoState[id] = !bingoState[id];
     localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
-    
-    // Geluid bij afvinken (alleen als de state naar 'true' gaat)
     if(bingoState[id]) {
-      soundBingoCheck.currentTime = 0; // Reset geluid voor snelle kliks
+      soundBingoCheck.currentTime = 0;
       soundBingoCheck.play();
       spawnEggs();
     }
-    
     renderBingo();
   };
 
@@ -308,18 +502,13 @@
     const grid = document.getElementById('bingoGrid');
     const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
     document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
-    
     grid.innerHTML = BINGO_ITEMS.map(item => `
       <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
         <span class="bingo-text">${item.text}</span>
         <span class="bingo-check">🥚</span>
       </div>`).join('');
-    
-    // Bingo voltooid
     if(checkedCount === 9) {
-      if(!document.getElementById('winOverlay').classList.contains('visible')) {
-        soundBingoWin.play(); // Speel win-geluid
-      }
+      if(!document.getElementById('winOverlay').classList.contains('visible')) soundBingoWin.play();
       document.getElementById('winOverlay').classList.add('visible');
     }
   };
@@ -360,6 +549,7 @@
   renderActivities();
   renderBingo();
   fetchWeather();
+  initWordSearch();
 </script>
 
 </body>
