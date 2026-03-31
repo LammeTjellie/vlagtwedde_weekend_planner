@@ -567,30 +567,50 @@
     } catch(e) { console.error("Weer kon niet laden"); }
   }
 
-  // Registreer de Service Worker
+/* --- PWA INSTALLATIE LOGICA --- */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
 
-// Logica voor de Installatie Pop-up
 let deferredPrompt;
+
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Voorkom dat de standaard browser-banner direct verschijnt
+  // Sla het event op zodat we het later kunnen triggeren
   e.preventDefault();
   deferredPrompt = e;
   
-  // Toon je eigen custom pop-up na bijvoorbeeld 3 seconden
+  // Toon een subtielere melding of wacht even
+  console.log("Installatie prompt staat klaar");
+  
+  // Optioneel: toon je eigen knop/melding
+  showInstallBanner(); 
+});
+
+function showInstallBanner() {
+  // We gebruiken een timeout om de gebruiker niet direct bij binnenkomst te lastig te vallen
   setTimeout(() => {
-    if (confirm("Wil je de Paas Planner installeren op je startscherm?")) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('App geïnstalleerd');
-        }
-        deferredPrompt = null;
-      });
+    if (deferredPrompt) {
+      // In plaats van een confirm, triggeren we direct de prompt bij interactie
+      const installConfirm = confirm("Wil je de Paas Planner installeren als App op je startscherm?");
+      
+      if (installConfirm) {
+        deferredPrompt.prompt(); // Dit opent de officiële Chrome/Android dialoog
+        
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('Gebruiker heeft de app geïnstalleerd');
+          }
+          deferredPrompt = null;
+        });
+      }
     }
-  }, 3000);
+  }, 2000);
+}
+
+// Luister of de app succesvol is geïnstalleerd
+window.addEventListener('appinstalled', (evt) => {
+  console.log('Paas App is succesvol toegevoegd aan het startscherm!');
+  deferredPrompt = null;
 });
   
   renderActivities();
