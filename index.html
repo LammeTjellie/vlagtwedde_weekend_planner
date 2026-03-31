@@ -40,32 +40,31 @@
     }
 
     .header-inner { max-width: 1024px; margin: 0 auto; position: relative; z-index: 1; }
-    .header-top { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-start; 
-      margin-bottom: 2rem;
-      gap: 1rem; /* Ruimte tussen tekst en knop */
-    }
     
+
+    .header-top { 
+      display: grid;
+      grid-template-columns: 1fr auto; /* Tekst krijgt alle ruimte, knop is zo breed als nodig */
+      align-items: start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
     .header-titles { 
       display: flex; 
       flex-direction: column; 
-      gap: 2px;
-      flex: 1; /* Zorgt dat de tekst de beschikbare ruimte pakt */
+      gap: 0; /* Geen extra witruimte tussen de regels */
     }
-    
+
     .main-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.4rem, 4.5vw, 2.5rem) !important; /* Iets kleiner om afbreken te voorkomen */
+      font-size: clamp(1.4rem, 6vw, 2.8rem) !important;
       font-style: italic;
       font-weight: 700;
       color: white !important;
-      text-transform: none !important;
-      letter-spacing: -0.01em;
-      margin: 0;
-      line-height: 1.2;
-      white-space: nowrap; /* Voorkomt dat "PAASWEEKEND" op twee regels komt */
+      margin: 0 !important;
+      line-height: 1.1 !important;
+      white-space: normal; /* Toestaan dat het breekt op hele kleine schermen */
     }
 
     .subtitle-vlagtwedde {
@@ -74,6 +73,7 @@
       color: rgba(255,255,255,0.9);
       text-transform: uppercase;
       letter-spacing: 0.15em;
+      margin-top: 0.2rem;
     }
 
     .subtitle-planner {
@@ -82,6 +82,7 @@
       color: white;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-top: -2px; /* Iets dichter op Vlagtwedde */
     }
 
     .install-pill {
@@ -91,18 +92,21 @@
       background: white;
       color: var(--orange);
       border: none;
-      padding: 0.6rem 1rem; /* Iets minder breed */
+      padding: 0.5rem 1rem; 
       border-radius: 9999px;
-      font-size: 0.75rem; /* Iets kleinere tekst voor de knop */
+      font-size: 0.8rem;
       font-weight: 800;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       animation: subtlePulse 3s infinite ease-in-out;
       white-space: nowrap;
-      flex-shrink: 0; /* Zorgt dat de knop niet in elkaar gedrukt wordt */
+      margin-top: 5px; /* Iets lager t.o.v. de bovenkant van de titel */
     }
 
     .install-pill.visible { display: flex; }
+
+  
+    
 
     @keyframes subtlePulse {
       0% { transform: scale(1); }
@@ -261,19 +265,22 @@
         <h1 class="main-title">🐰 PAASWEEKEND 2026</h1>
         <div class="subtitle-vlagtwedde">Vlagtwedde</div>
         <div class="subtitle-planner">WEEKEND PLANNER</div>
-        <button id="pwaInstallBtn" class="install-pill">
-          <span>📲</span> App Installeren
-        </button>
       </div>
-      <div class="header-actions">
-        <button class="btn" onclick="openModal('wsModal')">🧩 Woordzoeker</button>
-        <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
-        <button class="btn" onclick="openModal('weatherModal')">
-          <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
-        </button>
-      </div>
+      
+      <button id="pwaInstallBtn" class="install-pill">
+        <span>📲</span> App
+      </button>
     </div>
-    <div class="filters">
+    
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="openModal('wsModal')">🧩 Woordzoeker</button>
+      <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
+      <button class="btn" onclick="openModal('weatherModal')">
+        <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
+      </button>
+    </div>
+
+    <div class="filters" id="filtersContainer">
       <button class="filter-btn active" onclick="setFilter('alle', this)">Alles</button>
       <button class="filter-btn" onclick="setFilter('bezienswaardigheid', this)">Bezienswaardigheid</button>
       <button class="filter-btn" onclick="setFilter('attractie', this)">Attractie</button>
@@ -281,7 +288,6 @@
       <button class="filter-btn" onclick="setFilter('shoppen', this)">Shoppen</button>
     </div>
   </div>
-  <div class="header-deco"></div>
 </header>
 
 <main>
