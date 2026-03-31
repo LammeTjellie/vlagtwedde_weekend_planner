@@ -40,19 +40,32 @@
     }
 
     .header-inner { max-width: 1024px; margin: 0 auto; position: relative; z-index: 1; }
-    .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
-    .header-titles { display: flex; flex-direction: column; gap: 2px; }
-
+    .header-top { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: flex-start; 
+      margin-bottom: 2rem;
+      gap: 1rem; /* Ruimte tussen tekst en knop */
+    }
+    
+    .header-titles { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 2px;
+      flex: 1; /* Zorgt dat de tekst de beschikbare ruimte pakt */
+    }
+    
     .main-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 5vw, 2.8rem) !important;
+      font-size: clamp(1.4rem, 4.5vw, 2.5rem) !important; /* Iets kleiner om afbreken te voorkomen */
       font-style: italic;
       font-weight: 700;
       color: white !important;
       text-transform: none !important;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       margin: 0;
-      line-height: 1.1;
+      line-height: 1.2;
+      white-space: nowrap; /* Voorkomt dat "PAASWEEKEND" op twee regels komt */
     }
 
     .subtitle-vlagtwedde {
@@ -74,18 +87,19 @@
     .install-pill {
       display: none; 
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: white;
       color: var(--orange);
       border: none;
-      padding: 0.75rem 1.5rem; 
+      padding: 0.6rem 1rem; /* Iets minder breed */
       border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 700;
+      font-size: 0.75rem; /* Iets kleinere tekst voor de knop */
+      font-weight: 800;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       animation: subtlePulse 3s infinite ease-in-out;
       white-space: nowrap;
+      flex-shrink: 0; /* Zorgt dat de knop niet in elkaar gedrukt wordt */
     }
 
     .install-pill.visible { display: flex; }
@@ -247,6 +261,9 @@
         <h1 class="main-title">🐰 PAASWEEKEND 2026</h1>
         <div class="subtitle-vlagtwedde">Vlagtwedde</div>
         <div class="subtitle-planner">WEEKEND PLANNER</div>
+        <button id="pwaInstallBtn" class="install-pill">
+          <span>📲</span> App Installeren
+        </button>
       </div>
       <div class="header-actions">
         <button class="btn" onclick="openModal('wsModal')">🧩 Woordzoeker</button>
@@ -255,9 +272,6 @@
           <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
         </button>
       </div>
-        <button id="pwaInstallBtn" class="install-pill">
-          <span>📲</span> App Installeren
-        </button>
     </div>
     <div class="filters">
       <button class="filter-btn active" onclick="setFilter('alle', this)">Alles</button>
