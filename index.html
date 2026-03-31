@@ -8,9 +8,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="theme-color" content="#fdfcf9">
-  
-  <meta name="apple-mobile-web-app-title" content="Paas Planner" />
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/128/4336/4336968.png" /> 
   <title>Weekend Planner Vlagtwedde - Pasen</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,36 +16,133 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --bg: #fdfcf9; --stone-100: #f5f5f0; --stone-200: #e7e5e0; --stone-400: #a8a29e; --stone-500: #78716c; --stone-900: #1c1917; --orange: #ea580c; --easter-pink: #fce7f3; --easter-yellow: #fef9c3; --easter-green: #dcfce7; }
-    
-    html, body { 
-      height: 100%;
-      background: var(--bg); 
-      color: var(--stone-900); 
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    /* PWA Fullscreen Header aanpassing */
-    header { 
-      position: relative; 
-      overflow: hidden; 
-      /* Ruimte bovenin voor de statusbar van de telefoon */
-      padding: calc(env(safe-area-inset-top) + 2rem) 1.5rem 3rem; 
-      border-bottom: 6px solid var(--easter-green); 
-      background: linear-gradient(to bottom, #fff, var(--easter-yellow)); 
-    }
-
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--stone-900); font-family: 'DM Sans', sans-serif; min-height: 100vh; position: relative; }
+    header { position: relative; overflow: hidden; padding: calc(env(safe-area-inset-top) + 2rem) 1.5rem 3rem; border-bottom: 6px solid var(--easter-green); background: linear-gradient(to bottom, #fff, var(--easter-yellow)); }
     .header-inner { max-width: 1024px; margin: 0 auto; position: relative; z-index: 1; }
-    .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+    .header-top { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+    @media (min-width: 768px) { .header-top { flex-direction: row; justify-content: space-between; align-items: flex-start; } }
+    .header-eyebrow { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stone-500); margin-bottom: 0.5rem; }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1.1; color: var(--stone-900); font-style: italic; }
+    h1 span { font-style: normal; font-family: 'DM Sans', sans-serif; font-weight: 900; text-transform: uppercase; color: var(--orange); display: block; }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-start; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-900); cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn:hover { background: var(--stone-100); }
+    .btn-visit { margin-top: 1rem; background: var(--stone-900); color: white; width: 100%; justify-content: center; border: none; }
+    .btn-visit:hover { background: #000; color: white; }
+    .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+    .filter-btn { padding: 0.5rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-500); cursor: pointer; transition: all 0.3s; }
+    .filter-btn.active { background: var(--stone-900); border-color: var(--stone-900); color: white; }
+    .header-deco { position: absolute; top: 0; right: 0; width: 33%; height: 100%; background: rgba(255, 247, 237, 0.5); transform: skewX(-12deg) translateX(50%); pointer-events: none; }
+    main { max-width: 1024px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .activities-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+    @media (min-width: 640px) { .activities-grid { grid-template-columns: repeat(2, 1fr); } }
+    .activity-card { background: white; border: 1px solid var(--stone-200); border-radius: 2rem; overflow: hidden; animation: fadeUp 0.4s ease both; display: flex; flex-direction: column; }
+    .card-image-wrap { aspect-ratio: 16/10; overflow: hidden; position: relative; }
+    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+    .card-badge-top { position: absolute; top: 1rem; left: 1rem; display: flex; gap: 0.5rem; }
+    .badge { padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid; }
+    .badge-bezienswaardigheid { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+    .badge-attractie { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+    .badge-activiteit { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .badge-shoppen { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+    .card-badge-bottom { position: absolute; bottom: 1rem; left: 1rem; display: flex; gap: 0.5rem; }
+    .meta-pill { background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: var(--stone-900); display: flex; align-items: center; gap: 0.35rem; cursor: pointer; transition: 0.2s; }
+    .meta-pill:hover { background: white; transform: scale(1.05); }
+    .meta-pill svg { width: 0.75rem; height: 0.75rem; }
+    .card-body { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; margin-bottom: 1rem; }
+    .card-desc { color: var(--stone-500); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; }
     
-    /* Installatie knop stijl */
+    .vote-container { display: flex; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--stone-100); }
+    .vote-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; border-radius: 1rem; border: 1px solid var(--stone-200); background: white; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .vote-btn.active-up { background: #dcfce7; border-color: #4ade80; color: #166534; }
+    .vote-btn.active-down { background: #fee2e2; border-color: #f87171; color: #991b1b; }
+    .vote-count { font-variant-numeric: tabular-nums; }
+
+    .modal-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; padding: 1rem; background: rgba(28,25,23,0.4); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+    @media (min-width: 480px) { .modal-overlay { align-items: center; } }
+    .modal-panel { background: var(--stone-900); color: white; border-radius: 2.5rem; padding: 1.75rem; max-width: 420px; width: 100%; transform: translateY(30px); transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1); }
+    .modal-overlay.visible .modal-panel { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; }
+    .modal-close { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #292524; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+    
+    /* --- WOORDZOEKER CSS --- */
+    .ws-grid { 
+        display: grid; 
+        grid-template-columns: repeat(12, 1fr); 
+        gap: 0; 
+        background: #3f3a36; 
+        padding: 2px; 
+        border-radius: 0.75rem; 
+        margin-bottom: 1rem; 
+        touch-action: none; 
+        position: relative;
+        user-select: none;
+        overflow: hidden;
+    }
+    .ws-cell { 
+        aspect-ratio: 1; 
+        background: #292524; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 0.8rem; 
+        font-weight: 900; 
+        text-transform: uppercase; 
+        color: #d6d3d1;
+        position: relative;
+        z-index: 2;
+        border: 0.1px solid rgba(255,255,255,0.02);
+    }
+    .ws-cell.highlighted { background: rgba(234, 88, 12, 0.4); }
+    .ws-cell.found-cell { color: var(--easter-green); }
+
+    .word-line {
+        position: absolute;
+        height: 2px; /* Iets dunner voor betere leesbaarheid */
+        background: rgba(16, 185, 129, 0.6); /* Transparanter groen */
+        box-shadow: 0 0 3px rgba(0,0,0,0.3);
+        z-index: 5;
+        pointer-events: none;
+        transform-origin: left center;
+        border-radius: 1px;
+    }
+    .ws-words { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+    .ws-word { font-size: 0.65rem; padding: 0.2rem 0.5rem; background: #292524; border: 1px solid #3f3a36; border-radius: 999px; color: #a8a29e; }
+    .ws-word.found { background: var(--easter-green); color: #065f46; text-decoration: line-through; border-color: transparent; }
+    /* ---------------------- */
+
+    .bingo-letters { display: flex; justify-content: space-between; background: var(--orange); border-radius: 1rem; padding: 0.6rem 1.5rem; margin-bottom: 0.75rem; font-weight: 900; font-size: 1.2rem; letter-spacing: 0.2em; }
+    .bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; }
+    .bingo-item { aspect-ratio: 1; padding: 0.5rem; border-radius: 1rem; background: #292524; border: 2px solid #3f3a36; color: #d6d3d1; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+    .bingo-item.checked { background: var(--orange); border-color: var(--orange); color: white; }
+    .bingo-item .bingo-check { position: absolute; font-size: 2rem; opacity: 0; transform: scale(0.5); transition: all 0.3s; }
+    .bingo-item.checked .bingo-check { opacity: 1; transform: scale(1); }
+    .bingo-item.checked .bingo-text { opacity: 0.2; }
+    
+    .weather-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .weather-day { background: #292524; border-radius: 1rem; padding: 0.75rem 0.25rem; text-align: center; }
+    .weather-day.today { background: var(--orange); }
+    .wd-name { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: #a8a29e; margin-bottom: 0.4rem; }
+    .weather-day.today .wd-name { color: white; }
+    .wd-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .wd-temp { font-size: 0.9rem; font-weight: 900; }
+    
+    .win-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 2rem; text-align: center; backdrop-filter: blur(10px); }
+    .win-overlay.visible { display: flex; }
+    .win-overlay img { max-width: 80%; border-radius: 2rem; margin-bottom: 2rem; border: 3px solid var(--orange); }
+
     .install-pill {
-      display: none; /* Alleen tonen via JS als installatie mogelijk is */
+      display: none; 
       align-items: center;
       gap: 6px;
       background: var(--orange);
       color: white;
       border: none;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
       font-size: 0.75rem;
       font-weight: 800;
@@ -58,43 +152,17 @@
       white-space: nowrap;
     }
     .install-pill.visible { display: flex; }
-
+    
     @keyframes subtlePulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); box-shadow: 0 6px 15px rgba(234, 88, 12, 0.4); }
       100% { transform: scale(1); }
     }
-
-    h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 4rem); line-height: 1.1; color: var(--stone-900); font-style: italic; }
-    h1 span { font-style: normal; font-family: 'DM Sans', sans-serif; font-weight: 900; text-transform: uppercase; color: var(--orange); display: block; }
     
-    .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
-    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-900); cursor: pointer; transition: all 0.2s; text-decoration: none; }
-    
-    /* Rest van je CSS blijft ongewijzigd */
-    .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
-    .filter-btn { padding: 0.5rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; border: 1px solid var(--stone-200); background: white; color: var(--stone-500); cursor: pointer; }
-    .filter-btn.active { background: var(--stone-900); color: white; }
-    main { max-width: 1024px; margin: 0 auto; padding: 3rem 1.5rem; }
-    .activities-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-    @media (min-width: 640px) { .activities-grid { grid-template-columns: repeat(2, 1fr); } }
-    .activity-card { background: white; border: 1px solid var(--stone-200); border-radius: 2rem; overflow: hidden; display: flex; flex-direction: column; }
-    .card-image-wrap { aspect-ratio: 16/10; overflow: hidden; position: relative; }
-    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    .card-body { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
-    .card-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; margin-bottom: 1rem; }
-    .card-desc { color: var(--stone-500); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; }
-    .vote-container { display: flex; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--stone-100); }
-    .vote-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; border-radius: 1rem; border: 1px solid var(--stone-200); background: white; cursor: pointer; }
-    .modal-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; padding: 1rem; background: rgba(28,25,23,0.4); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.25s; }
-    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-    .modal-panel { background: var(--stone-900); color: white; border-radius: 2.5rem; padding: 1.75rem; max-width: 420px; width: 100%; }
-    .ws-grid { display: grid; grid-template-columns: repeat(12, 1fr); background: #3f3a36; padding: 2px; border-radius: 0.75rem; touch-action: none; position: relative; }
-    .ws-cell { aspect-ratio: 1; background: #292524; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; color: #d6d3d1; }
-    .word-line { position: absolute; height: 2px; background: rgba(16, 185, 129, 0.6); z-index: 5; pointer-events: none; transform-origin: left center; }
-    .win-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-    .win-overlay.visible { display: flex; }
-    footer { text-align: center; padding: 3rem 1.5rem; color: var(--stone-400); font-size: 0.7rem; }
+    @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+    .falling-egg { position: fixed; top: -50px; z-index: 999; font-size: 2rem; pointer-events: none; animation: fall linear forwards; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    footer { text-align: center; padding: 3rem 1.5rem; color: var(--stone-400); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; }
   </style>
 </head>
 <body>
@@ -106,16 +174,16 @@
         <div class="header-eyebrow">🐰 Paasweekend 2026</div>
         <h1>Vlagtwedde<br><span>Weekend Planner</span></h1>
       </div>
-      <button id="pwaInstallBtn" class="install-pill">
-        <span>📲</span> App Installeren
-      </button>
-    </div>
-    <div class="header-actions">
-      <button class="btn" onclick="openModal('wsModal')">🧩 Woordzoeker</button>
-      <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
-      <button class="btn" onclick="openModal('weatherModal')">
-        <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
-      </button>
+      <div class="header-actions">
+        <button class="btn" onclick="openModal('wsModal')">🧩 Woordzoeker</button>
+        <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
+        <button class="btn" onclick="openModal('weatherModal')">
+          <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
+        </button>
+      </div>
+        <button id="pwaInstallBtn" class="install-pill">
+          <span>📲</span> App Installeren
+        </button>
     </div>
     <div class="filters">
       <button class="filter-btn active" onclick="setFilter('alle', this)">Alles</button>
@@ -125,6 +193,7 @@
       <button class="filter-btn" onclick="setFilter('shoppen', this)">Shoppen</button>
     </div>
   </div>
+  <div class="header-deco"></div>
 </header>
 
 <main>
@@ -133,15 +202,46 @@
 
 <div class="modal-overlay" id="wsModal" onclick="if(event.target===this)closeModal('wsModal')">
   <div class="modal-panel" style="max-width: 500px;">
-    <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+    <div class="modal-header">
       <div class="modal-title">Paas Woordzoeker 🧩</div>
-      <button class="modal-close" onclick="closeModal('wsModal')" style="background:none; border:none; color:white; font-size:1.5rem;">✕</button>
+      <button class="modal-close" onclick="closeModal('wsModal')">✕</button>
     </div>
+    <p style="font-size:0.7rem; color:var(--stone-400); margin-bottom:1rem; text-align:center;">Sleep over de letters om woorden te vinden.</p>
     <div class="ws-grid" id="wsGrid"></div>
-    <div id="wsWords" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1rem;"></div>
-    <button class="btn" style="width:100%; margin-top:1.5rem; background:#292524; color:white; border:none;" onclick="initWordSearch()">🔄 Nieuwe Puzzel</button>
+    <div class="ws-words" id="wsWords"></div>
   </div>
 </div>
+
+<div class="modal-overlay" id="bingoModal" onclick="if(event.target===this)closeModal('bingoModal')">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">Familie Bingo 🥚</div>
+      <button class="modal-close" onclick="closeModal('bingoModal')">✕</button>
+    </div>
+    <div style="margin-bottom:1rem; font-size:0.8rem; color:var(--stone-400)" id="bingoScore">0 / 9 afgevinkt</div>
+    <div class="bingo-letters"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
+    <div class="bingo-grid" id="bingoGrid"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="weatherModal" onclick="if(event.target===this)closeModal('weatherModal')">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">Weerbericht 🌤️</div>
+      <button class="modal-close" onclick="closeModal('weatherModal')">✕</button>
+    </div>
+    <div class="weather-days" id="weatherDays"></div>
+  </div>
+</div>
+
+<div class="win-overlay" id="winOverlay">
+  <img src="Rudi_Paasei_In_Mond.gif" alt="Winnaar">
+  <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic" id="winTitle">GEWONNEN! 🐣</h2>
+  <p style="margin-bottom:2rem" id="winMessage">Gefeliciteerd, je bent een echte speurneus!</p>
+  <button class="btn" style="background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="location.reload();">Opnieuw spelen</button>
+</div>
+
+<footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -159,46 +259,373 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  /* --- VERBETERDE PWA INSTALLATIE LOGICA --- */
-  let deferredPrompt;
-  const installBtn = document.getElementById('pwaInstallBtn');
+  // SOUNDS
+  const soundLike = new Audio('thomasdislike.mp3');
+  const soundDislike = new Audio('thomasdislike.mp3');
+  const soundBingoCheck = new Audio('bingocheck.mp3');
+  const soundBingoWin = new Audio('bingowin.mp3');
+  const soundWordFound = new Audio('wordfoundcheck.mp3'); 
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+  const ACTIVITIES = [
+    { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
+    { id: "2", title: "Sportsbar De Dribbel", description: "Gezellige sportsbar in Vlagtwedde voor een drankje en sport kijken.", category: "activiteit", distance: 1, image: "https://www.sportplazavlagtwedde.nl/dynamic/image/248d9fe116df64a804cfc1eabb862995a03c01a5b90005ef4915078bbb5ae4db/width=1200/height=450/image.webp", url: "https://www.sportplazavlagtwedde.nl" },
+    { id: "3", title: "Winkelcentrum de Weiert", description: "Groot overdekt winkelcentrum in Emmen voor een dagje shoppen.", category: "shoppen", distance: 30, image: "https://winkelcentrumdeweiert.nl/wp-content/uploads/2021/07/winkelcentrum-emmen-16.06.40-1.png", url: "https://winkelcentrumdeweiert.nl" },
+    { id: "4", title: "Wildlands Dierentuin Emmen", description: "Een uniek avonturenpark met drie verschillende werelden.", category: "attractie", distance: 30, image: "https://images.tripper.nl/wildlands-adventure-zoo-ticket-korting/a558c7.jpg?auto=format&auto=enhance&q=100", url: "https://www.wildlands.nl" },
+    { id: "5", title: "Vestingdorp Bourtange", description: "Een uniek historisch verdedigingswerk. Stap terug in de tijd.", category: "bezienswaardigheid", distance: 10, image: "https://www.bungalowparkoverzicht.nl/app/uploads/2024/04/Vestingdorp-Bourtange.webp", url: "https://www.bourtange.nl" },
+    { id: "6", title: "Natuurgebied Liefstinghsbroek", description: "Een prachtig oud bosgebied voor een rustige wandeling.", category: "bezienswaardigheid", distance: 2, image: "https://www.hetliefstinghsbroek.nl/fileadmin/user_upload/het-liefstinghsbroek/header-liefstinghsbroek.png", url: "https://www.staatsbosbeheer.nl/natuurgebieden/westerwolde" },
+    { id: "7", title: "Hunebedcentrum Borger", description: "Ontdek de wereld van de hunebedbouwers.", category: "bezienswaardigheid", distance: 32, image: "https://www.hunebedcentrum.eu/wp-content/uploads/2021/05/hunebed-header2-1536x518.png", url: "https://www.hunebedcentrum.eu" },
+    { id: "8", title: "Wonderwereld", description: "Ontdek, Beleef, Bewonder in de bossen van Ter Apel", category: "attractie", distance: 24, image: "https://wonderwereld.nl/wp-content/uploads/2023/04/IMG_3136.jpeg", url: "https://wonderwereld.nl" },
+    { id: "9", title: "Buitencenturm Boomkroonpad", description: "Dit wandelpad leidt je hoog langs de toppen van de bomen.", category: "activiteit", distance: 32, image: "https://www.staatsbosbeheer.nl/-/media/hondsrug/hondsrug-boomkroonpad.jpg", url: "https://www.staatsbosbeheer.nl/uit-in-de-natuur/locaties/buitencentrum-boomkroonpad" }
+  ];
+
+  const BINGO_ITEMS = [
+    { id: 1, text: "Rudi zegt: 'Dit is het laatste jaar dat ik mee ga'" },
+    { id: 2, text: "Iemand klaagt dat een ander te lang op de wc zit" },
+    { id: 3, text: "Iemand zingt de verkeerde tekst bij Hitster" },
+    { id: 4, text: "Harry doet even z'n ogen dicht op de bank" },
+    { id: 5, text: "Iemand knoeit tijdens het paasontbijt" },
+    { id: 6, text: "Een kind doet zich pijn" },
+    { id: 7, text: "Er wordt een stinkscheet gelaten" },
+    { id: 8, text: "Rudi zegt iets AARDIGS tegen Anouk" },
+    { id: 9, text: "Iemand legt het paasverhaal uit" }
+  ];
+
+  // --- WOORDZOEKER DATA & LOGICA ---
+  const WS_WORDS = ["ANOUK", "RIK", "FAE", "SIEM", "ELINE", "MENZO", "BRAM", "TYGO", "PETRA", "HARRY", "RUDI", "LINDA", "THOMAS", "PAASONTBIJT", "PAASEI", "VLAGTWEDDE", "PAASHAAS", "JEZUS", "CHOCOLADE"];
+  let wsGrid = [];
+  let foundWSWords = [];
+  let isDragging = false;
+  let startCell = null;
+
+  function initWordSearch() {
+    const size = 12;
+    wsGrid = Array(size).fill().map(() => Array(size).fill(''));
+    const directions = [[0,1], [0,-1], [1,0], [-1,0], [1,1], [1,-1], [-1,1], [-1,-1]];
+
+    [...WS_WORDS].sort((a,b) => b.length - a.length).forEach(word => {
+        let placed = false;
+        let attempts = 0;
+        while (!placed && attempts < 500) {
+            const dir = directions[Math.floor(Math.random() * directions.length)];
+            const r = Math.floor(Math.random() * size);
+            const c = Math.floor(Math.random() * size);
+            if (canPlace(word, r, c, dir, size)) {
+                for (let i = 0; i < word.length; i++) {
+                    wsGrid[r + i * dir[0]][c + i * dir[1]] = word[i];
+                }
+                placed = true;
+            }
+            attempts++;
+        }
+    });
+
+    for(let r=0; r<size; r++) {
+        for(let c=0; c<size; c++) {
+            if(wsGrid[r][c] === '') wsGrid[r][c] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
+        }
+    }
+    renderWS();
   }
 
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if(installBtn) installBtn.classList.add('visible');
+  function canPlace(word, r, c, dir, size) {
+    for (let i = 0; i < word.length; i++) {
+        const nr = r + i * dir[0], nc = c + i * dir[1];
+        if (nr < 0 || nr >= size || nc < 0 || nc >= size) return false;
+        // Verbetering: Nu kan een letter ook geplaatst worden als deze hetzelfde is (overlap!)
+        if (wsGrid[nr][nc] !== '' && wsGrid[nr][nc] !== word[i]) return false;
+    }
+    return true;
+  }
+
+  function renderWS() {
+    const container = document.getElementById('wsGrid');
+    container.innerHTML = '';
+    foundWSWords = []; 
+    wsGrid.forEach((row, r) => row.forEach((letter, c) => {
+        const cell = document.createElement('div');
+        cell.className = 'ws-cell';
+        cell.textContent = letter;
+        cell.dataset.r = r; cell.dataset.c = c;
+        cell.addEventListener('mousedown', (e) => { e.preventDefault(); startSelect(r, c); });
+        cell.addEventListener('touchstart', (e) => { e.preventDefault(); startSelect(r, c); }, {passive: false});
+        cell.addEventListener('mouseenter', () => moveSelect(r, c));
+        container.appendChild(cell);
+    }));
+
+    container.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (el && el.classList.contains('ws-cell')) moveSelect(parseInt(el.dataset.r), parseInt(el.dataset.c));
+    }, {passive: false});
+
+    window.addEventListener('mouseup', endSelect);
+    window.addEventListener('touchend', endSelect);
+    document.getElementById('wsWords').innerHTML = WS_WORDS.map(w => `<span class="ws-word" id="ws-item-${w}">${w}</span>`).join('');
+  }
+
+  function startSelect(r, c) { isDragging = true; startCell = { r, c }; clearHighlight(); highlightCell(r, c); }
+  
+  function moveSelect(r, c) { 
+    if (!isDragging || (startCell.r === r && startCell.c === c)) return; 
+    clearHighlight(); 
+    const cells = getCellsBetween(startCell.r, startCell.c, r, c); 
+    cells.forEach(cell => highlightCell(cell.r, cell.c)); 
+  }
+  
+  function endSelect() {
+    if (!isDragging) return;
+    isDragging = false;
+    const highlighted = document.querySelectorAll('.ws-cell.highlighted');
+    if (highlighted.length < 2) { clearHighlight(); return; }
+
+    const word = Array.from(highlighted).map(el => el.textContent).join('');
+    const revWord = word.split('').reverse().join('');
+    
+    let foundMatch = null;
+    if (WS_WORDS.includes(word)) foundMatch = word;
+    else if (WS_WORDS.includes(revWord)) foundMatch = revWord;
+
+    if (foundMatch && !foundWSWords.includes(foundMatch)) {
+        foundWSWords.push(foundMatch);
+        soundWordFound.currentTime = 0; soundWordFound.play();
+        document.getElementById(`ws-item-${foundMatch}`).classList.add('found');
+        highlighted.forEach(el => el.classList.add('found-cell'));
+        drawWordLine(highlighted);
+        
+        // Check voor eindscherm
+        if (foundWSWords.length === WS_WORDS.length) {
+          setTimeout(() => {
+            soundBingoWin.play();
+            document.getElementById('winTitle').textContent = "PUZZEL KLAAR! 🧩";
+            document.getElementById('winMessage').textContent = "Je hebt alle woorden gevonden!";
+            document.getElementById('winOverlay').classList.add('visible');
+          }, 500);
+        }
+    }
+    clearHighlight();
+  }
+
+  function getCellsBetween(r1, c1, r2, c2) {
+    const dr = r2 - r1, dc = c2 - c1, dist = Math.max(Math.abs(dr), Math.abs(dc));
+    if (dist === 0) return [];
+    const stepR = dr / dist, stepC = dc / dist;
+    if ((Math.abs(stepR) !== 1 && stepR !== 0) || (Math.abs(stepC) !== 1 && stepC !== 0)) return [];
+    
+    const cells = [];
+    for (let i = 0; i <= dist; i++) cells.push({ r: r1 + Math.round(i * stepR), c: c1 + Math.round(i * stepC) });
+    return cells;
+  }
+
+  function drawWordLine(elements) {
+    const first = elements[0], last = elements[elements.length - 1];
+    const grid = document.getElementById('wsGrid');
+    const x1 = first.offsetLeft + (first.offsetWidth / 2);
+    const y1 = first.offsetTop + (first.offsetHeight / 2);
+    const x2 = last.offsetLeft + (last.offsetWidth / 2);
+    const y2 = last.offsetTop + (last.offsetHeight / 2);
+    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+    const line = document.createElement('div');
+    line.className = 'word-line';
+    line.style.width = `${length}px`; 
+    line.style.left = `${x1}px`; 
+    line.style.top = `${y1}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+    grid.appendChild(line);
+  }
+
+  function highlightCell(r, c) { const el = document.querySelector(`[data-r="${r}"][data-c="${c}"]`); if (el) el.classList.add('highlighted'); }
+  function clearHighlight() { document.querySelectorAll('.ws-cell.highlighted').forEach(el => el.classList.remove('highlighted')); }
+  // --- EINDE WOORDZOEKER LOGICA ---
+
+  let currentFilter = 'alle';
+  let votesData = {};
+
+  onSnapshot(doc(db, "planner", "votes"), (snapshot) => {
+    if (snapshot.exists()) {
+      votesData = snapshot.data();
+      renderActivities();
+    } else {
+      setDoc(doc(db, "planner", "votes"), {});
+    }
   });
 
-  if(installBtn) {
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        installBtn.classList.remove('visible');
+  window.handleVote = async (id, type) => {
+    const userKey = `voted_${id}`;
+    const oldVote = localStorage.getItem(userKey);
+    const updates = {};
+
+    if (oldVote === type) {
+      updates[`${id}_${type}`] = increment(-1);
+      localStorage.removeItem(userKey);
+    } 
+    else if (oldVote && oldVote !== type) {
+      updates[`${id}_${oldVote}`] = increment(-1);
+      updates[`${id}_${type}`] = increment(1);
+      localStorage.setItem(userKey, type);
+      if(type === 'up') soundLike.play(); else soundDislike.play();
+    }
+    else {
+      updates[`${id}_${type}`] = increment(1);
+      localStorage.setItem(userKey, type);
+      if(type === 'up') soundLike.play(); else soundDislike.play();
+    }
+    await updateDoc(doc(db, "planner", "votes"), updates);
+  };
+
+  window.renderActivities = () => {
+    const grid = document.getElementById('activitiesGrid');
+    let items = currentFilter === 'alle' ? [...ACTIVITIES] : ACTIVITIES.filter(a => a.category === currentFilter);
+    items.sort((a, b) => a.distance - b.distance);
+
+    grid.innerHTML = items.map(a => {
+      const up = votesData[`${a.id}_up`] || 0;
+      const down = votesData[`${a.id}_down`] || 0;
+      const myVote = localStorage.getItem(`voted_${a.id}`);
+      return `
+      <div class="activity-card">
+        <div class="card-image-wrap">
+          <img src="${a.image}">
+          <div class="card-badge-top"><span class="badge badge-${a.category}">${a.category}</span></div>
+          <div class="card-badge-bottom">
+            <div class="meta-pill" onclick="openMaps('${a.title}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--orange)"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> ${a.distance} km
+            </div>
+            <div class="meta-pill" onclick="openMaps('${a.title}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#2563eb"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg> ± ${Math.round(a.distance * 1.5)} min
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">${a.title}</h3>
+          <p class="card-desc">${a.description}</p>
+          <a href="${a.url}" target="_blank" class="btn btn-visit">Bezoek website</a>
+          <div class="vote-container">
+            <button class="vote-btn ${myVote==='up'?'active-up':''}" onclick="handleVote('${a.id}', 'up')">
+              👍 <span class="vote-count">${up}</span>
+            </button>
+            <button class="vote-btn ${myVote==='down'?'active-down':''}" onclick="handleVote('${a.id}', 'down')">
+              👎 <span class="vote-count">${down}</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  };
+
+  let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
+  
+  window.openMaps = (title) => {
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(title + ' Vlagtwedde')}`, '_blank');
+  };
+
+  window.setFilter = (cat, btn) => {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderActivities();
+  };
+
+  window.toggleBingo = (id) => {
+    bingoState[id] = !bingoState[id];
+    localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
+    if(bingoState[id]) {
+      soundBingoCheck.currentTime = 0;
+      soundBingoCheck.play();
+      spawnEggs();
+    }
+    renderBingo();
+  };
+
+  window.renderBingo = () => {
+    const grid = document.getElementById('bingoGrid');
+    const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
+    document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
+    grid.innerHTML = BINGO_ITEMS.map(item => `
+      <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
+        <span class="bingo-text">${item.text}</span>
+        <span class="bingo-check">🥚</span>
+      </div>`).join('');
+    if(checkedCount === 9) {
+      if(!document.getElementById('winOverlay').classList.contains('visible')) {
+        soundBingoWin.play();
+        document.getElementById('winTitle').textContent = "BINGO! 🐣";
+        document.getElementById('winMessage').textContent = "Je hebt de hele kaart vol!";
+        document.getElementById('winOverlay').classList.add('visible');
       }
+    }
+  };
+
+  window.spawnEggs = () => {
+    const emojis = ['🥚', '🐣', '🌸', '🐰'];
+    for(let i=0; i<12; i++) {
+      const egg = document.createElement('div');
+      egg.className = 'falling-egg';
+      egg.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      egg.style.left = Math.random() * 100 + 'vw';
+      egg.style.animationDuration = (Math.random() * 2 + 1) + 's';
+      document.body.appendChild(egg);
+      setTimeout(() => egg.remove(), 3000);
+    }
+  };
+
+  window.openModal = (id) => document.getElementById(id).classList.add('visible');
+  window.closeModal = (id) => document.getElementById(id).classList.remove('visible');
+
+  async function fetchWeather() {
+    try {
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=4');
+      const data = await res.json();
+      const WMO = { 0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 45:'🌫️', 61:'🌧️', 80:'🌦️', 95:'⛈️' };
+      document.getElementById('wIcon').textContent = WMO[data.current.weathercode] || '⛅';
+      document.getElementById('wTemp').textContent = Math.round(data.current.temperature_2m) + '°';
+      const daysNL = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+      document.getElementById('weatherDays').innerHTML = data.daily.time.map((t, i) => `
+        <div class="weather-day ${i===0?'today':''}">
+          <div class="wd-name">${i===0?'NU':daysNL[new Date(t).getDay()]}</div>
+          <div class="wd-icon">${WMO[data.daily.weathercode[i]] || '⛅'}</div>
+          <div class="wd-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
+        </div>`).join('');
+    } catch(e) { console.error("Weer kon niet laden"); }
+  }
+
+  // Registreer de Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+    
+    let deferredPrompt;
+    const installBtn = document.getElementById('pwaInstallBtn');
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if(installBtn) installBtn.classList.add('visible');
+    });
+    
+    if(installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.classList.remove('visible');
+        }
+        deferredPrompt = null;
+      });
+    }
+    
+    window.addEventListener('appinstalled', () => {
+      if(installBtn) installBtn.classList.remove('visible');
       deferredPrompt = null;
     });
-  }
-
-  window.addEventListener('appinstalled', () => {
-    if(installBtn) installBtn.classList.remove('visible');
-    deferredPrompt = null;
-  });
-
-  /* --- DE REST VAN JE BESTAANDE LOGICA --- */
-  // (Hier komen je ACTIVITIES, BINGO_ITEMS, initWordSearch, fetchWeather, etc.)
-  // Zorg dat je de volledige functies uit je vorige index.html hier weer plakt.
-
-  // Belangrijk: roep de functies aan om alles te starten
+  
   renderActivities();
-  // renderBingo(); 
+  renderBingo();
   fetchWeather();
   initWordSearch();
 </script>
+
 </body>
 </html>
