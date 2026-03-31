@@ -567,6 +567,32 @@
     } catch(e) { console.error("Weer kon niet laden"); }
   }
 
+  // Registreer de Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
+// Logica voor de Installatie Pop-up
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Voorkom dat de standaard browser-banner direct verschijnt
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Toon je eigen custom pop-up na bijvoorbeeld 3 seconden
+  setTimeout(() => {
+    if (confirm("Wil je de Paas Planner installeren op je startscherm?")) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('App geïnstalleerd');
+        }
+        deferredPrompt = null;
+      });
+    }
+  }, 3000);
+});
+  
   renderActivities();
   renderBingo();
   fetchWeather();
