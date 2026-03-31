@@ -63,11 +63,12 @@
     .modal-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; padding: 1rem; background: rgba(28,25,23,0.4); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.25s; }
     .modal-overlay.visible { opacity: 1; pointer-events: auto; }
     @media (min-width: 480px) { .modal-overlay { align-items: center; } }
-    .modal-panel { background: var(--stone-900); color: white; border-radius: 2.5rem; padding: 1.75rem; max-width: 420px; width: 100%; transform: translateY(30px); transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1); }
+    .modal-panel { background: var(--stone-900); color: white; border-radius: 2.5rem; padding: 1.75rem; max-width: 420px; width: 100%; transform: translateY(30px); transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1); max-height: 90vh; overflow-y: auto; }
     .modal-overlay.visible .modal-panel { transform: translateY(0); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
     .modal-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; }
     .modal-close { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #292524; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+    
     .bingo-letters { display: flex; justify-content: space-between; background: var(--orange); border-radius: 1rem; padding: 0.6rem 1.5rem; margin-bottom: 0.75rem; font-weight: 900; font-size: 1.2rem; letter-spacing: 0.2em; }
     .bingo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; }
     .bingo-item { aspect-ratio: 1; padding: 0.5rem; border-radius: 1rem; background: #292524; border: 2px solid #3f3a36; color: #d6d3d1; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
@@ -75,6 +76,16 @@
     .bingo-item .bingo-check { position: absolute; font-size: 2rem; opacity: 0; transform: scale(0.5); transition: all 0.3s; }
     .bingo-item.checked .bingo-check { opacity: 1; transform: scale(1); }
     .bingo-item.checked .bingo-text { opacity: 0.2; }
+
+    /* WOORDZOEKER CSS */
+    .ws-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; background: #3f3a36; padding: 2px; border-radius: 0.75rem; margin-bottom: 1rem; touch-action: manipulation; }
+    .ws-cell { aspect-ratio: 1; background: #292524; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; cursor: pointer; user-select: none; border-radius: 2px; transition: 0.1s; }
+    .ws-cell.selected { background: var(--orange); color: white; }
+    .ws-cell.found { background: var(--easter-green); color: #065f46; }
+    .ws-words { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .ws-word { font-size: 0.65rem; padding: 0.2rem 0.5rem; background: #292524; border: 1px solid #3f3a36; border-radius: 999px; color: #a8a29e; }
+    .ws-word.found { background: var(--easter-green); color: #065f46; text-decoration: line-through; border-color: transparent; }
+
     .weather-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
     .weather-day { background: #292524; border-radius: 1rem; padding: 0.75rem 0.25rem; text-align: center; }
     .weather-day.today { background: var(--orange); }
@@ -82,9 +93,11 @@
     .weather-day.today .wd-name { color: white; }
     .wd-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
     .wd-temp { font-size: 0.9rem; font-weight: 900; }
+
     .win-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 2rem; text-align: center; backdrop-filter: blur(10px); }
     .win-overlay.visible { display: flex; }
     .win-overlay img { max-width: 80%; border-radius: 2rem; margin-bottom: 2rem; border: 3px solid var(--orange); }
+    
     @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     .falling-egg { position: fixed; top: -50px; z-index: 999; font-size: 2rem; pointer-events: none; animation: fall linear forwards; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -101,7 +114,8 @@
         <h1>Vlagtwedde<br><span>Weekend Planner</span></h1>
       </div>
       <div class="header-actions">
-        <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
+        <button class="btn" onclick="openModal('bingoModal')">🧺 Bingo</button>
+        <button class="btn" onclick="openModal('wordSearchModal')">🧩 Puzzel</button>
         <button class="btn" onclick="openModal('weatherModal')">
           <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
         </button>
@@ -134,6 +148,18 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="wordSearchModal" onclick="if(event.target===this)closeModal('wordSearchModal')">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">Paas Woordzoeker 🧩</div>
+      <button class="modal-close" onclick="closeModal('wordSearchModal')">✕</button>
+    </div>
+    <p style="font-size: 0.7rem; color: var(--stone-400); margin-bottom: 1rem;">Zoek de namen en woorden horizontaal of verticaal.</p>
+    <div class="ws-grid" id="wsGrid"></div>
+    <div class="ws-words" id="wsWords"></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="weatherModal" onclick="if(event.target===this)closeModal('weatherModal')">
   <div class="modal-panel">
     <div class="modal-header">
@@ -149,6 +175,13 @@
   <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic">BINGO! 🐣</h2>
   <p style="margin-bottom:2rem">Je hebt de hele kaart vol!</p>
   <button class="btn" style="background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="localStorage.removeItem('bingo_pazen'); location.reload();">Kaart resetten</button>
+</div>
+
+<div class="win-overlay" id="wsWinOverlay">
+  <img src="puzzelmaster.gif" alt="Puzzelmaster">
+  <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic">PUZZELMASTER! 🏆</h2>
+  <p style="margin-bottom:2rem">Alle familieleden en woorden zijn gevonden!</p>
+  <button class="btn" onclick="location.reload();">Nog een keer</button>
 </div>
 
 <footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
@@ -172,8 +205,9 @@
   // SOUNDS
   const soundLike = new Audio('thomasdislike.mp3');
   const soundDislike = new Audio('thomasdislike.mp3');
-  const soundBingoCheck = new Audio('bingocheck.mp3'); // Zorg dat dit bestand bestaat
-  const soundBingoWin = new Audio('bingowin.mp3');     // Zorg dat dit bestand bestaat
+  const soundBingoCheck = new Audio('bingocheck.mp3');
+  const soundBingoWin = new Audio('bingowin.mp3');
+  const soundWordFound = new Audio('wordfound.mp3');
 
   const ACTIVITIES = [
     { id: "1", title: "Dinopark Landgoed Tenaxx", description: "Een park vol met dinosaurussen op ware grootte, een dinomuseum en binnenspeeltuin.", category: "attractie", distance: 10, image: "https://cdn.prod.website-files.com/65a283f223e7ba2a5cd2a7a4/66733caa7b50c394140e0fa1_Kinderen%20met%20trex.webp", url: "https://dinoparklandgoedtenaxx.nl" },
@@ -199,9 +233,16 @@
     { id: 9, text: "Iemand legt het paasverhaal uit" }
   ];
 
+  // WOORDZOEKER DATA
+  const WS_WORDS = ["ANOUK", "RIK", "FAE", "SIEM", "ELINE", "MENZO", "BRAM", "TYGO", "PETRA", "HARRY", "RUDI", "LINDA", "THOMAS", "PAASONTBIJT", "PAASEI", "VLAGTWEDDE", "PAASHAAS", "JEZUS", "CHOCOLADE"];
+  let wsGrid = Array(12).fill().map(() => Array(12).fill(''));
+  let selectedCells = [];
+  let foundWords = [];
+
   let currentFilter = 'alle';
   let votesData = {};
 
+  // FIREBASE SNAPSHOT
   onSnapshot(doc(db, "planner", "votes"), (snapshot) => {
     if (snapshot.exists()) {
       votesData = snapshot.data();
@@ -211,27 +252,101 @@
     }
   });
 
+  // WOORDZOEKER ENGINE
+  function initWordSearch() {
+    wsGrid = Array(12).fill().map(() => Array(12).fill(''));
+    WS_WORDS.forEach(word => {
+      let placed = false;
+      let attempts = 0;
+      while (!placed && attempts < 100) {
+        let dir = Math.random() > 0.5 ? 'H' : 'V';
+        let r = Math.floor(Math.random() * 12);
+        let c = Math.floor(Math.random() * 12);
+        if (dir === 'H' && c + word.length <= 12) {
+          let canPlace = true;
+          for(let i=0; i<word.length; i++) if(wsGrid[r][c+i] !== '' && wsGrid[r][c+i] !== word[i]) canPlace = false;
+          if(canPlace) {
+            for(let i=0; i<word.length; i++) wsGrid[r][c+i] = word[i];
+            placed = true;
+          }
+        } else if (dir === 'V' && r + word.length <= 12) {
+          let canPlace = true;
+          for(let i=0; i<word.length; i++) if(wsGrid[r+i][c] !== '' && wsGrid[r+i][c] !== word[i]) canPlace = false;
+          if(canPlace) {
+            for(let i=0; i<word.length; i++) wsGrid[r+i][c] = word[i];
+            placed = true;
+          }
+        }
+        attempts++;
+      }
+    });
+    for(let r=0; r<12; r++) {
+      for(let c=0; c<12; c++) {
+        if(wsGrid[r][c] === '') wsGrid[r][c] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
+      }
+    }
+    renderWS();
+  }
+
+  function renderWS() {
+    const gridEl = document.getElementById('wsGrid');
+    gridEl.innerHTML = '';
+    wsGrid.forEach((row, r) => row.forEach((letter, c) => {
+      const cell = document.createElement('div');
+      cell.className = 'ws-cell';
+      cell.textContent = letter;
+      cell.dataset.pos = `${r}-${c}`;
+      cell.onclick = () => {
+        if(cell.classList.contains('found')) return;
+        cell.classList.toggle('selected');
+        const pos = cell.dataset.pos;
+        if(selectedCells.includes(pos)) selectedCells = selectedCells.filter(p => p !== pos);
+        else selectedCells.push(pos);
+        checkWSWord();
+      };
+      gridEl.appendChild(cell);
+    }));
+    document.getElementById('wsWords').innerHTML = WS_WORDS.map(w => `<span class="ws-word" id="ws-item-${w}">${w}</span>`).join('');
+  }
+
+  function checkWSWord() {
+    const word = selectedCells.map(pos => {
+      const [r, c] = pos.split('-');
+      return wsGrid[r][c];
+    }).join('');
+
+    if(WS_WORDS.includes(word) && !foundWords.includes(word)) {
+      foundWords.push(word);
+      soundWordFound.currentTime = 0;
+      soundWordFound.play();
+      document.getElementById(`ws-item-${word}`).classList.add('found');
+      document.querySelectorAll('.ws-cell.selected').forEach(el => {
+        el.classList.remove('selected');
+        el.classList.add('found');
+      });
+      selectedCells = [];
+      if(foundWords.length === WS_WORDS.length) document.getElementById('wsWinOverlay').classList.add('visible');
+    }
+  }
+
+  // ALGEMENE FUNCTIES
   window.handleVote = async (id, type) => {
     const userKey = `voted_${id}`;
     const oldVote = localStorage.getItem(userKey);
     const updates = {};
-
     if (oldVote === type) {
       updates[`${id}_${type}`] = increment(-1);
       localStorage.removeItem(userKey);
-    } 
-    else if (oldVote && oldVote !== type) {
+    } else if (oldVote && oldVote !== type) {
       updates[`${id}_${oldVote}`] = increment(-1);
       updates[`${id}_${type}`] = increment(1);
       localStorage.setItem(userKey, type);
-      if(type === 'up') soundLike.play(); else soundDislike.play();
-    }
-    else {
+      soundLike.play();
+    } else {
       updates[`${id}_${type}`] = increment(1);
       localStorage.setItem(userKey, type);
-      if(type === 'up') soundLike.play(); else soundDislike.play();
+      soundLike.play();
     }
-
     await updateDoc(doc(db, "planner", "votes"), updates);
   };
 
@@ -239,38 +354,20 @@
     const grid = document.getElementById('activitiesGrid');
     let items = currentFilter === 'alle' ? [...ACTIVITIES] : ACTIVITIES.filter(a => a.category === currentFilter);
     items.sort((a, b) => a.distance - b.distance);
-
     grid.innerHTML = items.map(a => {
       const up = votesData[`${a.id}_up`] || 0;
       const down = votesData[`${a.id}_down`] || 0;
       const myVote = localStorage.getItem(`voted_${a.id}`);
-      
       return `
       <div class="activity-card">
-        <div class="card-image-wrap">
-          <img src="${a.image}">
-          <div class="card-badge-top"><span class="badge badge-${a.category}">${a.category}</span></div>
-          <div class="card-badge-bottom">
-            <div class="meta-pill" onclick="openMaps('${a.title}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--orange)"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> ${a.distance} km
-            </div>
-            <div class="meta-pill" onclick="openMaps('${a.title}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#2563eb"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4 0H9m4 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg> ± ${Math.round(a.distance * 1.5)} min
-            </div>
-          </div>
-        </div>
+        <div class="card-image-wrap"><img src="${a.image}"><div class="card-badge-top"><span class="badge badge-${a.category}">${a.category}</span></div></div>
         <div class="card-body">
           <h3 class="card-title">${a.title}</h3>
           <p class="card-desc">${a.description}</p>
-          <a href="${a.url}" target="_blank" class="btn btn-visit">Bezoek website</a>
-          
+          <a href="${a.url}" target="_blank" class="btn btn-visit">Website</a>
           <div class="vote-container">
-            <button class="vote-btn ${myVote==='up'?'active-up':''}" onclick="handleVote('${a.id}', 'up')">
-              👍 <span class="vote-count">${up}</span>
-            </button>
-            <button class="vote-btn ${myVote==='down'?'active-down':''}" onclick="handleVote('${a.id}', 'down')">
-              👎 <span class="vote-count">${down}</span>
-            </button>
+            <button class="vote-btn ${myVote==='up'?'active-up':''}" onclick="handleVote('${a.id}', 'up')">👍 ${up}</button>
+            <button class="vote-btn ${myVote==='down'?'active-down':''}" onclick="handleVote('${a.id}', 'down')">👎 ${down}</button>
           </div>
         </div>
       </div>`;
@@ -278,11 +375,6 @@
   };
 
   let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
-  
-  window.openMaps = (title) => {
-    window.open(`https://www.google.com/maps/search/${encodeURIComponent(title + ' Vlagtwedde')}`, '_blank');
-  };
-
   window.setFilter = (cat, btn) => {
     currentFilter = cat;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -293,14 +385,7 @@
   window.toggleBingo = (id) => {
     bingoState[id] = !bingoState[id];
     localStorage.setItem('bingo_pazen', JSON.stringify(bingoState));
-    
-    // Geluid bij afvinken (alleen als de state naar 'true' gaat)
-    if(bingoState[id]) {
-      soundBingoCheck.currentTime = 0; // Reset geluid voor snelle kliks
-      soundBingoCheck.play();
-      spawnEggs();
-    }
-    
+    if(bingoState[id]) { soundBingoCheck.currentTime = 0; soundBingoCheck.play(); spawnEggs(); }
     renderBingo();
   };
 
@@ -308,20 +393,11 @@
     const grid = document.getElementById('bingoGrid');
     const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
     document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
-    
     grid.innerHTML = BINGO_ITEMS.map(item => `
       <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
-        <span class="bingo-text">${item.text}</span>
-        <span class="bingo-check">🥚</span>
+        <span class="bingo-text">${item.text}</span><span class="bingo-check">🥚</span>
       </div>`).join('');
-    
-    // Bingo voltooid
-    if(checkedCount === 9) {
-      if(!document.getElementById('winOverlay').classList.contains('visible')) {
-        soundBingoWin.play(); // Speel win-geluid
-      }
-      document.getElementById('winOverlay').classList.add('visible');
-    }
+    if(checkedCount === 9) { soundBingoWin.play(); document.getElementById('winOverlay').classList.add('visible'); }
   };
 
   window.spawnEggs = () => {
@@ -337,7 +413,10 @@
     }
   };
 
-  window.openModal = (id) => document.getElementById(id).classList.add('visible');
+  window.openModal = (id) => {
+    document.getElementById(id).classList.add('visible');
+    if(id === 'wordSearchModal' && wsGrid[0][0] === '') initWordSearch();
+  };
   window.closeModal = (id) => document.getElementById(id).classList.remove('visible');
 
   async function fetchWeather() {
@@ -361,6 +440,5 @@
   renderBingo();
   fetchWeather();
 </script>
-
 </body>
 </html>
