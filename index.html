@@ -355,7 +355,7 @@
 <nav class="bottom-nav">
   <button class="nav-item" onclick="window.scrollTo({top:0, behavior:'smooth'})">🏠</button>
   <button class="nav-item" onclick="openModal('bingoModal')">🧺</button>
-  <button class="nav-item" onclick="window.open('link-naar-plattegrond.pdf', '_blank')">🗺️</button>
+  <button class="nav-item" onclick="window.open('https://www.parcreevee.nl/plattegrond', '_blank')">🗺️</button>
   <button class="nav-item" onclick="openModal('wsModal')">🧩</button>
   <button class="nav-item" onclick="toggleFilters()">🔘</button>
 </nav>
@@ -395,30 +395,35 @@
 
   // 2. RENDERING FUNCTIES
   function renderActivities(filter = 'alle') {
-    const grid = document.getElementById('activitiesGrid');
-    const filtered = filter === 'alle' ? ACTIVITIES : ACTIVITIES.filter(a => a.category === filter);
+  const grid = document.getElementById('activitiesGrid');
+  
+  // 1. Filteren
+  let items = filter === 'alle' ? ACTIVITIES : ACTIVITIES.filter(a => a.category === filter);
+  
+  // 2. Sorteren op afstand (laag naar hoog)
+  items.sort((a, b) => a.distance - b.distance);
+
+  grid.innerHTML = items.map(a => {
+    // Reistijd berekening
+    const travelTime = Math.round(a.distance * 1.2) + 2;
+    // Google Maps link vanaf Parc Emslandermeer (Vlagtwedde)
+    const mapsUrl = `https://www.google.com/maps/dir/Parc+Emslandermeer,+Vlagtwedde/${encodeURIComponent(a.title)}`;
     
-    grid.innerHTML = filtered.map(a => {
-      // De reistijd berekening (Afstand * 1.2 minuut per km + 2 min marge)
-      const travelTime = Math.round(a.distance * 1.2) + 2;
-      
-      return `
-        <div class="card">
-          <div class="card-badges">
-            <div class="badge">📍 ${a.distance} km</div>
-            <div class="badge">🚗 ${travelTime} min</div>
-          </div>
-          <img src="${a.image}" class="card-img" alt="${a.title}">
-          <div class="card-content">
-            <div class="card-title">${a.title}</div>
-            <div class="card-info">${a.description}</div>
-            <a href="${a.url}" target="_blank" style="text-decoration:none; color:var(--accent); font-weight:800; font-size:0.9rem;">
-              Bezoek Website →
-            </a>
-          </div>
-        </div>`;
-    }).join('');
-  }
+    return `
+      <div class="card">
+        <div class="card-badges" onclick="window.open('${mapsUrl}', '_blank')" style="cursor:pointer">
+          <div class="badge">📍 ${a.distance} km</div>
+          <div class="badge">🚗 ${travelTime} min</div>
+        </div>
+        <img src="${a.image}" class="card-img" alt="${a.title}">
+        <div class="card-content">
+          <div class="card-title">${a.title}</div>
+          <div class="card-info">${a.description}</div>
+          <a href="${a.url}" target="_blank" class="btn-visit">Website →</a>
+        </div>
+      </div>`;
+  }).join('');
+}
 
   function renderFilters() {
     const container = document.getElementById('filtersContainer');
@@ -453,18 +458,19 @@
   };
 
   window.renderBingo = () => {
-    const grid = document.getElementById('bingoGrid');
-    const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
-    if(document.getElementById('bingoScore')) document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
-    
-    if(grid) {
-      grid.innerHTML = BINGO_ITEMS.map(item => `
-        <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
-          <span class="bingo-text">${item.text}</span>
-          <span class="bingo-check">🥚</span>
-        </div>`).join('');
-    }
-  };
+  const grid = document.getElementById('bingoGrid');
+  const scoreEl = document.getElementById('bingoScore');
+  const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
+  
+  if(scoreEl) scoreEl.textContent = `${checkedCount} / 9 afgevinkt`;
+  if(grid) {
+    grid.innerHTML = BINGO_ITEMS.map(item => `
+      <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
+        <span>${item.text}</span>
+        <div class="bingo-check">🥚</div>
+      </div>`).join('');
+  }
+};
 
   // WEER
   async function fetchWeather() {
@@ -493,10 +499,119 @@
   // WOORDZOEKER (Basis)
   function initWordSearch() {
     const size = 12;
+    // 1. Maak een leeg grid
     wsGrid = Array(size).fill().map(() => Array(size).fill(''));
-    // (Hulpfuncties canPlace en renderWS moeten hieronder staan)
+    const directions = [[0,1], [0,-1], [1,0], [-1,0], [1,1], [1,-1], [-1,1], [-1,-1]];
+
+    // 2. Plaats de woorden uit WS_WORDS
+    [...WS_WORDS].sort((a,b) => b.length - a.length).forEach(word => {
+        let placed = false;
+        let attempts = 0;
+        while (!placed && attempts < 500) {
+            const dir = directions[Math.floor(Math.random() * directions.length)];
+            const r = Math.floor(Math.random() * size);
+            const c = Math.floor(Math.random() * size);
+            if (canPlace(word, r, c, dir, size)) {
+                for (let i = 0; i < word.length; i++) {
+                    wsGrid[r + i * dir[0]][c + i * dir[1]] = word[i];
+                }
+                placed = true;
+            }
+            attempts++;
+        }
+    });
+
+    // 3. Vul de lege plekken met willekeurige letters
+    for(let r=0; r<size; r++) {
+        for(let c=0; c<size; c++) {
+            if(wsGrid[r][c] === '') {
+                wsGrid[r][c] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
+            }
+        }
+    }
+
+    // 4. Teken alles op het scherm
     renderWS(); 
-  }
+    renderWordList(); // <-- DIT IS DE AANROEP
+    setupWSEvents();  // Deze activeert het slepen/selecteren
+}
+
+  function renderWordList() {
+    const container = document.getElementById('wsWords');
+    if (!container) return;
+    
+    // Toont de woordenlijst. Woorden die gevonden zijn krijgen de klas 'found'
+    container.innerHTML = WS_WORDS.map(word => 
+        `<span class="ws-word ${foundWords.has(word) ? 'found' : ''}">${word}</span>`
+    ).join('');
+}
+
+  let isSelecting = false;
+
+function setupWSEvents() {
+    const gridEl = document.getElementById('wsGrid');
+    if(!gridEl) return;
+
+    const handleStart = (e) => {
+        const cell = e.target.closest('.ws-cell');
+        if(!cell) return;
+        isSelecting = true;
+        selectedCells = [cell];
+        cell.classList.add('selected');
+        e.preventDefault();
+    };
+
+    const handleMove = (e) => {
+        if(!isSelecting) return;
+        const touch = e.touches ? e.touches[0] : e;
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        const cell = el ? el.closest('.ws-cell') : null;
+        
+        if(cell && !selectedCells.includes(cell)) {
+            selectedCells.push(cell);
+            cell.classList.add('selected');
+        }
+    };
+
+    const handleEnd = () => {
+        if(!isSelecting) return;
+        isSelecting = false;
+        
+        // Maak een woord van de geselecteerde letters
+        const word = selectedCells.map(c => c.textContent).join('');
+        const reversedWord = word.split('').reverse().join('');
+
+        if(WS_WORDS.includes(word) || WS_WORDS.includes(reversedWord)) {
+            const found = WS_WORDS.includes(word) ? word : reversedWord;
+            foundWords.add(found);
+            selectedCells.forEach(c => {
+                c.classList.remove('selected');
+                c.classList.add('found');
+            });
+            renderWordList(); // Update de lijst (wordt groen)
+            checkWSWin();
+        } else {
+            selectedCells.forEach(c => c.classList.remove('selected'));
+        }
+        selectedCells = [];
+    };
+
+    gridEl.addEventListener('mousedown', handleStart);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+    gridEl.addEventListener('touchstart', handleStart, {passive: false});
+    window.addEventListener('touchmove', handleMove, {passive: false});
+    window.addEventListener('touchend', handleEnd);
+}
+
+function checkWSWin() {
+    if(foundWords.size === WS_WORDS.length) {
+        soundBingoWin.play();
+        document.getElementById('winTitle').textContent = "GEWONNEN! 🧩";
+        document.getElementById('winMessage').textContent = "Je hebt alle woorden gevonden!";
+        document.getElementById('winOverlay').classList.add('visible');
+    }
+}
 
   function renderWS() {
     const gridEl = document.getElementById('wsGrid');
@@ -504,6 +619,25 @@
     gridEl.innerHTML = 'Letters laden...'; // Versimpeld voor nu
   }
 
+  let deferredPrompt;
+const installBtn = document.getElementById('pwaInstallBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if(installBtn) installBtn.classList.add('visible');
+});
+
+if(installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') installBtn.classList.remove('visible');
+    deferredPrompt = null;
+  });
+}
+  
   // INITIALISATIE
   renderActivities();
   renderFilters();
@@ -511,5 +645,13 @@
   fetchWeather();
 </script>
 
+<div id="winOverlay" class="modal-overlay" onclick="this.classList.remove('visible')">
+  <div class="modal-panel" style="text-align:center">
+    <h2 id="winTitle" style="font-size:2.5rem">🐣</h2>
+    <p id="winMessage" style="font-weight:bold; margin:1rem 0"></p>
+    <button class="filter-option active" style="width:100%">Geweldig!</button>
+  </div>
+</div>
+  
 </body>
 </html>
