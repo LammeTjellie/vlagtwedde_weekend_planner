@@ -102,13 +102,13 @@
 
     .word-line {
         position: absolute;
-        height: 3px;
-        background: var(--easter-green);
-        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        height: 2px; /* Iets dunner voor betere leesbaarheid */
+        background: rgba(16, 185, 129, 0.6); /* Transparanter groen */
+        box-shadow: 0 0 3px rgba(0,0,0,0.3);
         z-index: 5;
         pointer-events: none;
         transform-origin: left center;
-        border-radius: 2px;
+        border-radius: 1px;
     }
     .ws-words { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
     .ws-word { font-size: 0.65rem; padding: 0.2rem 0.5rem; background: #292524; border: 1px solid #3f3a36; border-radius: 999px; color: #a8a29e; }
@@ -208,10 +208,10 @@
 </div>
 
 <div class="win-overlay" id="winOverlay">
-  <img src="Rudi_Paasei_In_Mond.gif" alt="Bingo Winnaar">
-  <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic">BINGO! 🐣</h2>
-  <p style="margin-bottom:2rem">Je hebt de hele kaart vol!</p>
-  <button class="btn" style="background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="localStorage.removeItem('bingo_pazen'); location.reload();">Kaart resetten</button>
+  <img src="Rudi_Paasei_In_Mond.gif" alt="Winnaar">
+  <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic" id="winTitle">GEWONNEN! 🐣</h2>
+  <p style="margin-bottom:2rem" id="winMessage">Gefeliciteerd, je bent een echte speurneus!</p>
+  <button class="btn" style="background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="location.reload();">Opnieuw spelen</button>
 </div>
 
 <footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
@@ -283,7 +283,9 @@
             const r = Math.floor(Math.random() * size);
             const c = Math.floor(Math.random() * size);
             if (canPlace(word, r, c, dir, size)) {
-                for (let i = 0; i < word.length; i++) wsGrid[r + i * dir[0]][c + i * dir[1]] = word[i];
+                for (let i = 0; i < word.length; i++) {
+                    wsGrid[r + i * dir[0]][c + i * dir[1]] = word[i];
+                }
                 placed = true;
             }
             attempts++;
@@ -302,6 +304,7 @@
     for (let i = 0; i < word.length; i++) {
         const nr = r + i * dir[0], nc = c + i * dir[1];
         if (nr < 0 || nr >= size || nc < 0 || nc >= size) return false;
+        // Verbetering: Nu kan een letter ook geplaatst worden als deze hetzelfde is (overlap!)
         if (wsGrid[nr][nc] !== '' && wsGrid[nr][nc] !== word[i]) return false;
     }
     return true;
@@ -362,6 +365,16 @@
         document.getElementById(`ws-item-${foundMatch}`).classList.add('found');
         highlighted.forEach(el => el.classList.add('found-cell'));
         drawWordLine(highlighted);
+        
+        // Check voor eindscherm
+        if (foundWSWords.length === WS_WORDS.length) {
+          setTimeout(() => {
+            soundBingoWin.play();
+            document.getElementById('winTitle').textContent = "PUZZEL KLAAR! 🧩";
+            document.getElementById('winMessage').textContent = "Je hebt alle woorden gevonden!";
+            document.getElementById('winOverlay').classList.add('visible');
+          }, 500);
+        }
     }
     clearHighlight();
   }
@@ -508,8 +521,12 @@
         <span class="bingo-check">🥚</span>
       </div>`).join('');
     if(checkedCount === 9) {
-      if(!document.getElementById('winOverlay').classList.contains('visible')) soundBingoWin.play();
-      document.getElementById('winOverlay').classList.add('visible');
+      if(!document.getElementById('winOverlay').classList.contains('visible')) {
+        soundBingoWin.play();
+        document.getElementById('winTitle').textContent = "BINGO! 🐣";
+        document.getElementById('winMessage').textContent = "Je hebt de hele kaart vol!";
+        document.getElementById('winOverlay').classList.add('visible');
+      }
     }
   };
 
