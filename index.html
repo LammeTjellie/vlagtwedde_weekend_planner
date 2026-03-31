@@ -6,8 +6,8 @@
 
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="theme-color" content="#fdfcf9">
+  <meta name="theme-color" content="#ea580c">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Weekend Planner Vlagtwedde - Pasen</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +18,7 @@
     :root { --bg: #fdfcf9; --stone-100: #f5f5f0; --stone-200: #e7e5e0; --stone-400: #a8a29e; --stone-500: #78716c; --stone-900: #1c1917; --orange: #ea580c; --easter-pink: #fce7f3; --easter-yellow: #fef9c3; --easter-green: #dcfce7; }
     html { scroll-behavior: smooth; overflow-x: hidden; }
     body { background: var(--bg); color: var(--stone-900); font-family: 'DM Sans', sans-serif; min-height: 100vh; position: relative; }
-    header { position: relative; overflow: hidden; padding: calc(env(safe-area-inset-top) + 2rem) 1.5rem 3rem; border-bottom: 6px solid var(--easter-green); background: linear-gradient(to bottom, #fff, var(--easter-yellow)); }
+    header { position: relative; overflow: hidden; padding: calc(env(safe-area-inset-top) + 2rem) 1.5rem 3rem; border: none; background: linear-gradient(to bottom, #ea580c, var(--easter-yellow)); }
     .header-inner { max-width: 1024px; margin: 0 auto; position: relative; z-index: 1; }
     .header-top { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
     @media (min-width: 768px) { .header-top { flex-direction: row; justify-content: space-between; align-items: flex-start; } }
@@ -135,21 +135,23 @@
     .win-overlay.visible { display: flex; }
     .win-overlay img { max-width: 80%; border-radius: 2rem; margin-bottom: 2rem; border: 3px solid var(--orange); }
 
+    /* De Installatie-knop als een nette 'pill' rechtsboven */
     .install-pill {
-      display: none; 
+      display: none;
       align-items: center;
-      gap: 6px;
-      background: var(--orange);
-      color: white;
+      justify-content: center;
+      background: white; /* Wit op oranje */
+      color: var(--orange);
       border: none;
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 800;
+      padding: 0.6rem 1.25rem; /* Zelfde padding als je andere knoppen */
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       animation: subtlePulse 3s infinite ease-in-out;
       white-space: nowrap;
+      height: fit-content; /* Voorkomt dat hij uitrekt */
     }
     .install-pill.visible { display: flex; }
     
@@ -574,21 +576,45 @@
   window.closeModal = (id) => document.getElementById(id).classList.remove('visible');
 
   async function fetchWeather() {
-    try {
-      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FAmsterdam&forecast_days=4');
-      const data = await res.json();
-      const WMO = { 0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 45:'🌫️', 61:'🌧️', 80:'🌦️', 95:'⛈️' };
-      document.getElementById('wIcon').textContent = WMO[data.current.weathercode] || '⛅';
-      document.getElementById('wTemp').textContent = Math.round(data.current.temperature_2m) + '°';
+  try {
+    // We gebruiken jouw vaste coördinaten zodat hij altijd Vlagtwedde pakt
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=52.87&longitude=7.07&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max&timezone=auto&forecast_days=4';
+    
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Netwerk response was niet ok');
+    
+    const data = await res.json();
+    
+    // WMO codes (ik heb weather_code toegevoegd omdat de API de naam 'weathercode' aan het uitfaseren is)
+    const WMO = { 0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️', 45:'🌫️', 48:'🌫️', 51:'🌧️', 61:'🌧️', 63:'🌧️', 80:'🌦️', 95:'⛈️' };
+    
+    // Check of de elementen bestaan voordat we ze vullen (voorkomt errors)
+    const iconEl = document.getElementById('wIcon');
+    const tempEl = document.getElementById('wTemp');
+    const daysEl = document.getElementById('weatherDays');
+
+    if (iconEl) iconEl.textContent = WMO[data.current.weather_code] || '⛅';
+    if (tempEl) tempEl.textContent = Math.round(data.current.temperature_2m) + '°';
+    
+    if (daysEl) {
       const daysNL = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
-      document.getElementById('weatherDays').innerHTML = data.daily.time.map((t, i) => `
-        <div class="weather-day ${i===0?'today':''}">
-          <div class="wd-name">${i===0?'NU':daysNL[new Date(t).getDay()]}</div>
-          <div class="wd-icon">${WMO[data.daily.weathercode[i]] || '⛅'}</div>
-          <div class="wd-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
-        </div>`).join('');
-    } catch(e) { console.error("Weer kon niet laden"); }
-  }
+      daysEl.innerHTML = data.daily.time.map((t, i) => {
+        const date = new Date(t);
+        const dayName = i === 0 ? 'NU' : daysNL[date.getDay()];
+        return `
+          <div class="weather-day ${i === 0 ? 'today' : ''}">
+            <div class="wd-name">${dayName}</div>
+            <div class="wd-icon">${WMO[data.daily.weather_code[i]] || '⛅'}</div>
+            <div class="wd-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
+          </div>`;
+      }).join('');
+    }
+      } catch(e) { 
+        console.error("Weer kon niet laden:", e);
+        // Optioneel: toon een foutmelding in de UI
+        if (document.getElementById('wTemp')) document.getElementById('wTemp').textContent = "!?°";
+      }
+    }
 
   // Registreer de Service Worker
     if ('serviceWorker' in navigator) {
