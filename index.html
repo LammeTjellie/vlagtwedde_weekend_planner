@@ -616,18 +616,24 @@
   function renderWS() {
     const container = document.getElementById('wsGrid');
     container.innerHTML = '';
-    foundWSWords = []; 
+    
+    // Teken het grid
     wsGrid.forEach((row, r) => row.forEach((letter, c) => {
         const cell = document.createElement('div');
         cell.className = 'ws-cell';
         cell.textContent = letter;
         cell.dataset.r = r; cell.dataset.c = c;
+        
+        // Voeg de 'found-cell' class toe als dit een cel was van een gevonden woord
+        // (Dit is optioneel, de drawWordLine doet het meeste werk)
+        
         cell.addEventListener('mousedown', (e) => { e.preventDefault(); startSelect(r, c); });
         cell.addEventListener('touchstart', (e) => { e.preventDefault(); startSelect(r, c); }, {passive: false});
         cell.addEventListener('mouseenter', () => moveSelect(r, c));
         container.appendChild(cell);
     }));
 
+    // Touch support
     container.addEventListener('touchmove', (e) => {
         e.preventDefault();
         const touch = e.touches[0];
@@ -637,7 +643,55 @@
 
     window.addEventListener('mouseup', endSelect);
     window.addEventListener('touchend', endSelect);
-    document.getElementById('wsWords').innerHTML = WS_WORDS.map(w => `<span class="ws-word" id="ws-item-${w}">${w}</span>`).join('');
+
+    // Render de woordenlijst
+    document.getElementById('wsWords').innerHTML = WS_WORDS.map(w => {
+        const isFound = foundWSWords.includes(w);
+        return `<span class="ws-word ${isFound ? 'found' : ''}" id="ws-item-${w}">${w}</span>`;
+    }).join('');
+
+    // CRUCIAL: Teken de strepen voor woorden die al gevonden waren
+    if (foundWSWords.length > 0) {
+        // We gebruiken een kleine timeout zodat de browser de tijd heeft om de cellen 
+        // daadwerkelijk te tekenen (offsetLeft/Top zijn anders 0)
+        setTimeout(() => {
+            foundWSWords.forEach(word => {
+                reDrawStoredWord(word);
+            });
+        }, 100);
+    }
+  }
+
+  function reDrawStoredWord(word) {
+    // Deze functie probeert het woord te vinden in het grid om de lijn te tekenen
+    // We zoeken naar de cellen die dit woord vormen
+    // Omdat we weten welke woorden er zijn, zoeken we de letters in het grid
+    const cells = [];
+    const size = 12;
+    const directions = [[0,1], [0,-1], [1,0], [-1,0], [1,1], [1,-1], [-1,1], [-1,-1]];
+    
+    let found = false;
+    for (let r = 0; r < size && !found; r++) {
+      for (let c = 0; c < size && !found; c++) {
+        directions.forEach(dir => {
+          if (found) return;
+          let match = "";
+          let tempCells = [];
+          for (let i = 0; i < word.length; i++) {
+            const nr = r + i * dir[0], nc = c + i * dir[1];
+            if (nr >= 0 && nr < size && nc >= 0 && nc < size) {
+              match += wsGrid[nr][nc];
+              tempCells.push(document.querySelector(`[data-r="${nr}"][data-c="${nc}"]`));
+            }
+          }
+          if (match === word || match === word.split('').reverse().join('')) {
+            drawWordLine(tempCells);
+            tempCells.forEach(el => el.classList.add('found-cell'));
+            found = true;
+          }
+        });
+      }
+    }
   }
 
   function startSelect(r, c) { isDragging = true; startCell = { r, c }; clearHighlight(); highlightCell(r, c); }
