@@ -170,13 +170,16 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(5px);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
       z-index: 5000;
       /* Dit zorgt dat ze bovenin uitlijnen: */
-      align-items: flex-start; 
+       
+      display: none;
       justify-content: center;
-      padding: 20px;
+      align-items: flex-start;
+      
+      padding: 40px 20px;
     }
     
     .modal-overlay.visible {
@@ -189,12 +192,15 @@
       max-width: 500px;
       border-radius: 2rem;
       padding: 20px;
+      position: relative;
+      color: #1a1a1a;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
       /* Geef de modal een animatie van boven naar beneden */
-      animation: slideDown 0.3s ease-out;
+      animation: modalEnter 0.3s ease-out;
     }
     
-    @keyframes slideDown {
-      from { transform: translateY(-50px); opacity: 0; }
+    @keyframes modalEnter {
+      from { transform: translateY(-30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
 
