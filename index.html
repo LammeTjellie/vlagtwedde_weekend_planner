@@ -550,6 +550,26 @@
 
   function initWordSearch() {
     const size = 12;
+    
+    // Check of er al een opgeslagen puzzel is
+    const savedWS = JSON.parse(localStorage.getItem('ws_pazen_grid') || 'null');
+    const savedFound = JSON.parse(localStorage.getItem('ws_pazen_found') || '[]');
+    
+    if (savedWS) {
+        // Gebruik de opgeslagen puzzel
+        wsGrid = savedWS;
+        foundWSWords = savedFound;
+        renderWS();
+        
+        // Markeer de woorden die al gevonden waren in de lijst en op het grid
+        foundWSWords.forEach(word => {
+            const wordEl = document.getElementById(`ws-item-${word}`);
+            if (wordEl) wordEl.classList.add('found');
+        });
+        return; 
+    }
+
+    // Geen opgeslagen puzzel? Maak een nieuwe:
     wsGrid = Array(size).fill().map(() => Array(size).fill(''));
     const directions = [[0,1], [0,-1], [1,0], [-1,0], [1,1], [1,-1], [-1,1], [-1,-1]];
 
@@ -575,6 +595,11 @@
             if(wsGrid[r][c] === '') wsGrid[r][c] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
         }
     }
+    
+    // Sla de nieuwe grid op
+    localStorage.setItem('ws_pazen_grid', JSON.stringify(wsGrid));
+    localStorage.setItem('ws_pazen_found', JSON.stringify([]));
+    
     renderWS();
   }
 
@@ -628,23 +653,42 @@
     if (!isDragging) return;
     isDragging = false;
     const highlighted = document.querySelectorAll('.ws-cell.highlighted');
-    if (highlighted.length < 2) { clearHighlight(); return; }
+    
+    // Als er minder dan 2 letters zijn geselecteerd, doen we niks
+    if (highlighted.length < 2) { 
+      clearHighlight(); 
+      return; 
+    }
 
+    // Maak een woord van de geselecteerde letters
     const word = Array.from(highlighted).map(el => el.textContent).join('');
     const revWord = word.split('').reverse().join('');
     
     let foundMatch = null;
+    // Check of het woord (of het woord achterstevoren) in de lijst staat
     if (WS_WORDS.includes(word)) foundMatch = word;
     else if (WS_WORDS.includes(revWord)) foundMatch = revWord;
 
+    // Als het een geldig woord is en nog niet eerder gevonden
     if (foundMatch && !foundWSWords.includes(foundMatch)) {
         foundWSWords.push(foundMatch);
-        soundWordFound.currentTime = 0; soundWordFound.play();
-        document.getElementById(`ws-item-${foundMatch}`).classList.add('found');
+        
+        // OPSLAAN: Zorg dat de lijst met gevonden woorden bewaard blijft in het geheugen
+        localStorage.setItem('ws_pazen_found', JSON.stringify(foundWSWords));
+
+        // Feedback geven aan de gebruiker
+        soundWordFound.currentTime = 0; 
+        soundWordFound.play();
+        
+        // Markeer het woord als gevonden in de lijst onderaan
+        const wordListEl = document.getElementById(`ws-item-${foundMatch}`);
+        if (wordListEl) wordListEl.classList.add('found');
+        
+        // Kleur de cellen op het grid en teken de blijvende streep
         highlighted.forEach(el => el.classList.add('found-cell'));
         drawWordLine(highlighted);
         
-        // Check voor eindscherm
+        // Check of alle woorden gevonden zijn voor het eindscherm
         if (foundWSWords.length === WS_WORDS.length) {
           setTimeout(() => {
             soundBingoWin.play();
@@ -654,6 +698,8 @@
           }, 500);
         }
     }
+    
+    // Verwijder de tijdelijke selectie-kleur (oranje)
     clearHighlight();
   }
 
@@ -974,8 +1020,8 @@
         // Wis de opgeslagen bingo en woordzoeker data uit het geheugen van de telefoon
         localStorage.removeItem('bingo_pazen');
         
-        // Optioneel: als je ook de stemmen (likes) wilt resetten voor jezelf:
-        // ACTIVITIES.forEach(a => localStorage.removeItem(`voted_${a.id}`));
+        localStorage.removeItem('ws_pazen_grid');
+        localStorage.removeItem('ws_pazen_found');
     
         // Herlaad de pagina
         location.reload();
