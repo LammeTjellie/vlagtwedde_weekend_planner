@@ -139,7 +139,11 @@
     /* De icoontjes iets omhoog schuiven omdat een ei onderin breder is */
     .menu-item i, .menu-item span, .menu-item img {
       transform: translateY(-2px);
-      font-size: 24px;
+      width: 32px;          /* Forceert de breedte ongeacht het bronbestand */
+      height: 32px;         /* Forceert de hoogte */
+      object-fit: contain;  /* Zorgt dat de verhoudingen mooi blijven */
+      display: block;
+      pointer-events: none;
     }
     
     /* De hamburgerstreepjes ook in het midden van het ei houden */
@@ -473,9 +477,9 @@
     <span class="hamburger hamburger-3"></span>
   </label>
 
-  <button class="menu-item" onclick="openModal('weatherModal')">⛅</button>
-  <button class="menu-item" onclick="openModal('wsModal')">🧩</button>
-  <button class="menu-item" onclick="openModal('bingoModal')">🧺</button>
+  <button class="menu-item" onclick="openModal('weatherModal')"><img src="WeerIcon.png" alt="Weer"></button>
+  <button class="menu-item" onclick="openModal('wsModal')"><img src="WoordzoekerIcon.png" alt="Woordzoeker"></button>
+  <button class="menu-item" onclick="openModal('bingoModal')"><img src="BingoIcon.png" alt="Bingo"></button>
 </nav>
 
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
