@@ -768,7 +768,15 @@
   let bingoState = JSON.parse(localStorage.getItem('bingo_pazen') || '{}');
   
   window.openMaps = (title) => {
-    window.open(`https://www.google.com/maps/search/${encodeURIComponent(title + ' Vlagtwedde')}`, '_blank');
+    // Het adres van het vakantiepark als startpunt
+    const origin = encodeURIComponent("Buitenplaats Emslandermeer, Vlagtwedde");
+    // De bestemming (titel van de activiteit + plaats voor de zekerheid)
+    const destination = encodeURIComponent(title + " nabij Vlagtwedde");
+    
+    // De URL die direct de route (directions) opent
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
+    
+    window.open(mapsUrl, '_blank');
   };
 
   window.setFilter = (cat, btn) => {
