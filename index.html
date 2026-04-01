@@ -85,6 +85,25 @@
       margin-top: -2px; /* Iets dichter op Vlagtwedde */
     }
 
+    #winOverlay {
+      z-index: 9000; /* Veel hoger dan de modals */
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      }
+      
+    #winOverlay.visible {
+      display: flex;
+    }
+      
+      /* Zorg dat het bingoGrid geen gekke animaties van de eitjes-menu overneemt */
+    .bingo-grid .bingo-item {
+       transform: none !important;
+       transition: background 0.2s;
+    }
+    
     /* Gooey Menu Styles */
     /* --- Strak Paas Menu --- */
     .menu {
@@ -767,22 +786,35 @@
   };
 
   window.renderBingo = () => {
-    const grid = document.getElementById('bingoGrid');
-    const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
-    document.getElementById('bingoScore').textContent = `${checkedCount} / 9 afgevinkt`;
-    grid.innerHTML = BINGO_ITEMS.map(item => `
-      <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
-        <span class="bingo-text">${item.text}</span>
-        <span class="bingo-check">🥚</span>
-      </div>`).join('');
-    if(checkedCount === 9) {
-      if(!document.getElementById('winOverlay').classList.contains('visible')) {
-        soundBingoWin.play();
-        document.getElementById('winTitle').textContent = "BINGO! 🐣";
-        document.getElementById('winMessage').textContent = "Je hebt de hele kaart vol!";
-        document.getElementById('winOverlay').classList.add('visible');
+      const grid = document.getElementById('bingoGrid');
+      const checkedCount = BINGO_ITEMS.filter(i => bingoState[i.id]).length;
+      
+      // Update de score tekst
+      const scoreEl = document.getElementById('bingoScore');
+      if (scoreEl) scoreEl.textContent = `${checkedCount} / 9 afgevinkt`;
+      
+      // Teken de kaart
+      grid.innerHTML = BINGO_ITEMS.map(item => `
+        <div class="bingo-item ${bingoState[item.id] ? 'checked' : ''}" onclick="toggleBingo(${item.id})">
+          <span class="bingo-text">${item.text}</span>
+          <span class="bingo-check">🥚</span>
+        </div>`).join('');
+      
+      // Win-check
+      if(checkedCount === 9) {
+        if(!document.getElementById('winOverlay').classList.contains('visible')) {
+          // 1. Speel geluid
+          soundBingoWin.play();
+          
+          // 2. SLUIT de bingo modal (zodat deze niet over het winscherm ligt)
+          document.getElementById('bingoModal').classList.remove('visible');
+          
+          // 3. Vul en toon het win-scherm
+          document.getElementById('winTitle').textContent = "BINGO! 🐣";
+          document.getElementById('winMessage').textContent = "Geweldig! Je hebt de hele kaart vol. Geniet van je paasverrassing!";
+          document.getElementById('winOverlay').classList.add('visible');
+        }
       }
-    }
   };
 
   window.spawnEggs = () => {
