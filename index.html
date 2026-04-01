@@ -85,6 +85,82 @@
       margin-top: -2px; /* Iets dichter op Vlagtwedde */
     }
 
+    /* Gooey Menu Styles */
+    .menu {
+      filter: url("#shadowed-goo");
+      position: fixed;
+      right: 30px;
+      bottom: 30px;
+      width: 80px;
+      height: 80px;
+      text-align: center;
+      z-index: 4000;
+    }
+    
+    .menu-open { display: none; }
+    
+    .menu-item, .menu-open-button {
+      background: var(--accent);
+      border-radius: 100%;
+      width: 55px;
+      height: 55px;
+      margin-left: -27px;
+      position: absolute;
+      bottom: 10px;
+      color: white;
+      text-align: center;
+      line-height: 55px;
+      transform: translate3d(0, 0, 0);
+      transition: transform ease-out 200ms;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+    
+    .menu-open-button {
+      z-index: 2;
+      transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition-duration: 400ms;
+      transform: scale(1.1, 1.1) translate3d(0, 0, 0);
+    }
+    
+    .menu-open-button:hover { transform: scale(1.2, 1.2) translate3d(0, 0, 0); }
+    
+    .menu-open:checked + .menu-open-button {
+      transition-timing-function: linear;
+      transition-duration: 200ms;
+      transform: scale(0.8, 0.8) translate3d(0, 0, 0);
+    }
+    
+    /* De animatie naar boven */
+    .menu-open:checked ~ .menu-item {
+      transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .menu-open:checked ~ .menu-item:nth-child(3) { transition-duration: 190ms; transform: translate3d(0, -70px, 0); }
+    .menu-open:checked ~ .menu-item:nth-child(4) { transition-duration: 290ms; transform: translate3d(0, -135px, 0); }
+    .menu-open:checked ~ .menu-item:nth-child(5) { transition-duration: 390ms; transform: translate3d(0, -200px, 0); }
+    
+    /* Hamburger Icoontje */
+    .hamburger {
+      width: 25px;
+      height: 3px;
+      background: white;
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -12.5px;
+      margin-top: -1.5px;
+      transition: transform 200ms;
+    }
+    .hamburger-1 { transform: translate3d(0, -8px, 0); }
+    .hamburger-2 { transform: translate3d(0, 0, 0); }
+    .hamburger-3 { transform: translate3d(0, 8px, 0); }
+    
+    .menu-open:checked + .menu-open-button .hamburger-1 { transform: translate3d(0, 0, 0) rotate(45deg); }
+    .menu-open:checked + .menu-open-button .hamburger-2 { transform: translate3d(0, 0, 0) scale(0.1, 1); }
+    .menu-open:checked + .menu-open-button .hamburger-3 { transform: translate3d(0, 0, 0) rotate(-45deg); }
+
     .install-pill {
       display: none; 
       align-items: center;
@@ -271,14 +347,6 @@
         <span>📲</span> App
       </button>
     </div>
-    
-    <div class="header-actions">
-      <button class="btn btn-primary" onclick="openModal('wsModal')">🧩 Woordzoeker</button>
-      <button class="btn" onclick="openModal('bingoModal')">🧺 Paas-Bingo</button>
-      <button class="btn" onclick="openModal('weatherModal')">
-        <span id="wIcon">⛅</span> <span id="wTemp">--°</span>
-      </button>
-    </div>
 
     <div class="filters" id="filtersContainer">
       <button class="filter-btn active" onclick="setFilter('alle', this)">Alles</button>
@@ -337,6 +405,31 @@
 
 <footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
 
+<nav class="menu">
+  <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open" />
+  <label class="menu-open-button" for="menu-open">
+    <span class="hamburger hamburger-1"></span>
+    <span class="hamburger hamburger-2"></span>
+    <span class="hamburger hamburger-3"></span>
+  </label>
+
+  <button class="menu-item" onclick="openModal('weatherModal')" title="Weer">⛅</button>
+  <button class="menu-item" onclick="openModal('wsModal')" title="Woordzoeker">🧩</button>
+  <button class="menu-item" onclick="openModal('bingoModal')" title="Bingo">🧺</button>
+</nav>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
+  <defs>
+    <filter id="shadowed-goo">
+      <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
+      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+      <feGaussianBlur in="goo" stdDeviation="3" result="shadow" />
+      <feColorMatrix in="shadow" mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 -0.2" result="shadow" />
+      <feComposite in="goo" in2="shadow" operator="over" />
+    </filter>
+  </defs>
+</svg>
+  
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, doc, onSnapshot, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -738,12 +831,49 @@
       if(installBtn) installBtn.classList.remove('visible');
       deferredPrompt = null;
     });
+
+    // --- GOOEY MENU LOGICA ---
+
+    // Deze functie zorgt dat het menu inklapt
+    function closeGooeyMenu() {
+      const menuCheckbox = document.getElementById('menu-open');
+      if (menuCheckbox) {
+        menuCheckbox.checked = false;
+      }
+    }
+    
+    // We overschrijven de openModal functie een klein beetje 
+    // zodat hij ALTIJD eerst het menu sluit voordat het venster opent.
+    const originalOpenModal = window.openModal;
+    window.openModal = function(id) {
+      closeGooeyMenu(); // Sluit de vloeibare knop
+      
+      // Zoek het modal element en maak het zichtbaar
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('visible');
+        
+        // Specifieke extra acties per modal (indien nodig)
+        if (id === 'wsModal') initWordSearch();
+        if (id === 'bingoModal') renderBingo();
+        if (id === 'weatherModal') fetchWeather();
+      }
+    };
+    
+    // Zorg ook dat het menu sluit als je ergens anders klikt
+    document.addEventListener('click', function(event) {
+      const menu = document.querySelector('.menu');
+      const menuCheckbox = document.getElementById('menu-open');
+      if (menuCheckbox && menuCheckbox.checked && !menu.contains(event.target)) {
+        closeGooeyMenu();
+      }
+    });
   
   renderActivities();
   renderBingo();
   fetchWeather();
   initWordSearch();
 </script>
-
+  
 </body>
 </html>
