@@ -130,10 +130,10 @@
     }
     
     /* Kleuren per button (Pastel Paas Thema) */
-    .menu-open-button { background: #f87171; z-index: 2; } /* Zacht rood/koraal */
-    .menu-item:nth-child(3) { background: #fbbf24; } /* Pastel Geel (Weer) */
-    .menu-item:nth-child(4) { background: #60a5fa; } /* Pastel Blauw (Woordzoeker) */
-    .menu-item:nth-child(5) { background: #34d399; } /* Pastel Groen (Bingo) */
+    .menu-open-button { background: linear-gradient(185deg,rgba(195, 66, 63, 1) 0%, rgba(195, 66, 63, 1) 25%, rgba(255, 193, 69, 1) 25%, rgba(255, 193, 69, 1) 50%, rgba(246, 189, 209, 1) 50%, rgba(246, 189, 209, 1) 75%, rgba(66, 217, 200, 1) 75%, rgba(66, 217, 200, 1) 100%); z-index: 2; } /* Zacht rood/koraal */
+    .menu-item:nth-child(3) { background: #FFC145; } /* Pastel Geel (Weer) */
+    .menu-item:nth-child(4) { background: #F6BDD1; } /* Pastel Blauw (Woordzoeker) */
+    .menu-item:nth-child(5) { background: #42D9C8; } /* Pastel Groen (Bingo) */
     
     /* Hamburger streepjes */
     .hamburger {
@@ -154,9 +154,9 @@
     .menu-open:checked + .menu-open-button .hamburger-3 { transform: rotate(-45deg); }
     
     /* Uitklappen naar boven */
-    .menu-open:checked ~ .menu-item:nth-child(3) { transform: translateY(-70px); }
-    .menu-open:checked ~ .menu-item:nth-child(4) { transform: translateY(-135px); }
-    .menu-open:checked ~ .menu-item:nth-child(5) { transform: translateY(-200px); }
+    .menu-open:checked ~ .menu-item:nth-child(3) { transform: translateY(-80px); }
+    .menu-open:checked ~ .menu-item:nth-child(4) { transform: translateY(-160px); }
+    .menu-open:checked ~ .menu-item:nth-child(5) { transform: translateY(-240px); }
     
     /* Icoontjes styling */
     .menu-item img, .menu-item i {
