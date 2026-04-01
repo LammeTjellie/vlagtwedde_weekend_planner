@@ -99,12 +99,14 @@
     .menu-open { display: none; }
     
     .menu-item, .menu-open-button {
-      border-radius: 100%;
-      width: 55px;
-      height: 55px;
+      /* De "Magische" Eivorm-formule */
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      
+      width: 50px;  /* Iets smaller */
+      height: 65px; /* Iets hoger */
       position: absolute;
       bottom: 0;
-      right: 0;
+      right: 5px;
       color: white;
       display: flex;
       align-items: center;
@@ -113,6 +115,18 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* De icoontjes iets omhoog schuiven omdat een ei onderin breder is */
+    .menu-item i, .menu-item span, .menu-item img {
+      transform: translateY(-2px);
+      font-size: 24px;
+    }
+    
+    /* De hamburgerstreepjes ook in het midden van het ei houden */
+    .menu-open-button .hamburger {
+      left: 50%;
+      margin-left: -10px;
     }
     
     /* Kleuren per button (Pastel Paas Thema) */
@@ -153,11 +167,35 @@
     
     /* --- Modal aanpassing (Uitlijnen aan bovenkant) --- */
     .modal-overlay {
-      align-items: flex-start; /* Was flex-end */
-      padding-top: 2rem;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+      z-index: 5000;
+      /* Dit zorgt dat ze bovenin uitlijnen: */
+      align-items: flex-start; 
+      justify-content: center;
+      padding: 20px;
     }
+    
+    .modal-overlay.visible {
+      display: flex;
+    }
+    
     .modal-panel {
-      border-radius: 2rem; /* Rondom rond */
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 2rem;
+      padding: 20px;
+      /* Geef de modal een animatie van boven naar beneden */
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .install-pill {
