@@ -86,75 +86,79 @@
     }
 
     /* Gooey Menu Styles */
-    /* --- Verbeterde Gooey Menu CSS --- */
+    /* --- Strak Paas Menu --- */
     .menu {
-      filter: url("#shadowed-goo");
       position: fixed;
-      right: 30px;
-      bottom: 30px;
-      width: 80px;
-      height: 80px;
-      text-align: center;
+      right: 20px; /* Iets meer in de hoek */
+      bottom: 20px;
+      width: 60px;
+      height: 60px;
       z-index: 4000;
     }
     
     .menu-open { display: none; }
     
     .menu-item, .menu-open-button {
-      background: #ea580c; 
       border-radius: 100%;
-      width: 60px;
-      height: 60px;
-      margin-left: -30px;
+      width: 55px;
+      height: 55px;
       position: absolute;
-      bottom: 10px;
+      bottom: 0;
+      right: 0;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform ease-out 200ms;
+      transition: transform ease-out 250ms, background 200ms;
       border: none;
       cursor: pointer;
-      font-size: 28px; /* Emoji's lekker groot */
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     
-    .menu-open-button {
-      z-index: 2;
-      transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transition-duration: 400ms;
-      transform: scale(1.1, 1.1);
-    }
+    /* Kleuren per button (Pastel Paas Thema) */
+    .menu-open-button { background: #f87171; z-index: 2; } /* Zacht rood/koraal */
+    .menu-item:nth-child(3) { background: #fbbf24; } /* Pastel Geel (Weer) */
+    .menu-item:nth-child(4) { background: #60a5fa; } /* Pastel Blauw (Woordzoeker) */
+    .menu-item:nth-child(5) { background: #34d399; } /* Pastel Groen (Bingo) */
     
-    /* De hamburger streepjes: DIKKER gemaakt zodat ze niet verdwijnen */
+    /* Hamburger streepjes */
     .hamburger {
-      width: 25px;
-      height: 4px;
+      width: 20px;
+      height: 3px;
       background: white;
       display: block;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-left: -12.5px;
-      margin-top: -2px;
-      transition: transform 200ms;
       border-radius: 2px;
+      transition: transform 200ms;
+    }
+    .hamburger-1 { transform: translateY(-8px); }
+    .hamburger-2 { transform: translateY(0); }
+    .hamburger-3 { transform: translateY(8px); }
+    
+    .menu-open:checked + .menu-open-button .hamburger-1 { transform: rotate(45deg); }
+    .menu-open:checked + .menu-open-button .hamburger-2 { opacity: 0; }
+    .menu-open:checked + .menu-open-button .hamburger-3 { transform: rotate(-45deg); }
+    
+    /* Uitklappen naar boven */
+    .menu-open:checked ~ .menu-item:nth-child(3) { transform: translateY(-70px); }
+    .menu-open:checked ~ .menu-item:nth-child(4) { transform: translateY(-135px); }
+    .menu-open:checked ~ .menu-item:nth-child(5) { transform: translateY(-200px); }
+    
+    /* Icoontjes styling */
+    .menu-item img, .menu-item i {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
     }
     
-    .hamburger-1 { transform: translate3d(0, -10px, 0); }
-    .hamburger-2 { transform: translate3d(0, 0, 0); }
-    .hamburger-3 { transform: translate3d(0, 10px, 0); }
-    
-    .menu-open:checked + .menu-open-button .hamburger-1 { transform: translate3d(0, 0, 0) rotate(45deg); }
-    .menu-open:checked + .menu-open-button .hamburger-2 { transform: translate3d(0, 0, 0) scale(0.1, 1); }
-    .menu-open:checked + .menu-open-button .hamburger-3 { transform: translate3d(0, 0, 0) rotate(-45deg); }
-    
-    /* Uitklap posities naar boven */
-    .menu-open:checked ~ .menu-item {
-      transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+    /* --- Modal aanpassing (Uitlijnen aan bovenkant) --- */
+    .modal-overlay {
+      align-items: flex-start; /* Was flex-end */
+      padding-top: 2rem;
     }
-    .menu-open:checked ~ .menu-item:nth-child(3) { transform: translate3d(0, -80px, 0); }
-    .menu-open:checked ~ .menu-item:nth-child(4) { transform: translate3d(0, -155px, 0); }
-    .menu-open:checked ~ .menu-item:nth-child(5) { transform: translate3d(0, -230px, 0); }
+    .modal-panel {
+      border-radius: 2rem; /* Rondom rond */
+    }
 
     .install-pill {
       display: none; 
@@ -863,6 +867,25 @@
         closeGooeyMenu();
       }
     });
+
+    // Zoek de menu checkbox
+    const menuToggle = document.getElementById('menu-open');
+    
+    menuToggle.addEventListener('change', function() {
+      if (this.checked) {
+        // Als het menu opent, sluiten we alle open modals
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+          modal.classList.remove('visible');
+        });
+      }
+    });
+    
+    // Update je closeModal functie ook even zodat het menu meewerkt
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('visible');
+      // Optioneel: sluit ook het menu als je de modal handmatig sluit
+      document.getElementById('menu-open').checked = false;
+    }
   
   renderActivities();
   renderBingo();
