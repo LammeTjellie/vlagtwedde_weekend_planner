@@ -86,7 +86,7 @@
     }
 
     /* Gooey Menu Styles */
-    /* Verbeterde Gooey Menu Styles */
+    /* --- Verbeterde Gooey Menu CSS --- */
     .menu {
       filter: url("#shadowed-goo");
       position: fixed;
@@ -101,7 +101,7 @@
     .menu-open { display: none; }
     
     .menu-item, .menu-open-button {
-      background: #ea580c; /* Oranje zoals in je thema */
+      background: #ea580c; 
       border-radius: 100%;
       width: 60px;
       height: 60px;
@@ -112,17 +112,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transform: translate3d(0, 0, 0);
       transition: transform ease-out 200ms;
       border: none;
       cursor: pointer;
-      font-size: 24px; /* Grotere emoji/icoon */
+      font-size: 28px; /* Emoji's lekker groot */
     }
     
-    /* Hamburger streepjes - Nu dikker voor het gooey effect */
+    .menu-open-button {
+      z-index: 2;
+      transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition-duration: 400ms;
+      transform: scale(1.1, 1.1);
+    }
+    
+    /* De hamburger streepjes: DIKKER gemaakt zodat ze niet verdwijnen */
     .hamburger {
       width: 25px;
-      height: 4px; /* Dikker gemaakt */
+      height: 4px;
       background: white;
       display: block;
       position: absolute;
@@ -133,6 +139,7 @@
       transition: transform 200ms;
       border-radius: 2px;
     }
+    
     .hamburger-1 { transform: translate3d(0, -10px, 0); }
     .hamburger-2 { transform: translate3d(0, 0, 0); }
     .hamburger-3 { transform: translate3d(0, 10px, 0); }
@@ -141,23 +148,13 @@
     .menu-open:checked + .menu-open-button .hamburger-2 { transform: translate3d(0, 0, 0) scale(0.1, 1); }
     .menu-open:checked + .menu-open-button .hamburger-3 { transform: translate3d(0, 0, 0) rotate(-45deg); }
     
+    /* Uitklap posities naar boven */
     .menu-open:checked ~ .menu-item {
       transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
     }
-    
-    /* Afstanden voor het uitklappen naar boven */
-    .menu-open:checked ~ .menu-item:nth-child(3) { transition-duration: 190ms; transform: translate3d(0, -80px, 0); }
-    .menu-open:checked ~ .menu-item:nth-child(4) { transition-duration: 290ms; transform: translate3d(0, -150px, 0); }
-    .menu-open:checked ~ .menu-item:nth-child(5) { transition-duration: 390ms; transform: translate3d(0, -220px, 0); }
-    
-    /* Zorg dat de icoontjes in de bollen niet vervormen */
-    .menu-item {
-      z-index: 1;
-    }
-    .menu-item:hover {
-      background: white;
-      color: #ea580c;
-    }
+    .menu-open:checked ~ .menu-item:nth-child(3) { transform: translate3d(0, -80px, 0); }
+    .menu-open:checked ~ .menu-item:nth-child(4) { transform: translate3d(0, -155px, 0); }
+    .menu-open:checked ~ .menu-item:nth-child(5) { transform: translate3d(0, -230px, 0); }
 
     .install-pill {
       display: none; 
@@ -404,7 +401,7 @@
 <footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
 
 <nav class="menu">
-  <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open" />
+  <input type="checkbox" class="menu-open" name="menu-open" id="menu-open" />
   <label class="menu-open-button" for="menu-open">
     <span class="hamburger hamburger-1"></span>
     <span class="hamburger hamburger-2"></span>
@@ -419,9 +416,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
   <defs>
     <filter id="shadowed-goo">
-      <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
+      <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="8" />
       <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
-      <feGaussianBlur in="goo" stdDeviation="3" result="shadow" />
+      <feGaussianBlur in="goo" stdDeviation="2" result="shadow" />
       <feColorMatrix in="shadow" mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 -0.2" result="shadow" />
       <feComposite in="goo" in2="shadow" operator="over" />
     </filter>
