@@ -460,7 +460,7 @@
   <img src="Rudi_Paasei_In_Mond.gif" alt="Winnaar">
   <h2 style="font-family:'Playfair Display', serif; font-size:2rem; font-style:italic" id="winTitle">GEWONNEN! 🐣</h2>
   <p style="margin-bottom:2rem" id="winMessage">Gefeliciteerd, je bent een echte speurneus!</p>
-  <button class="btn" style="background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="location.reload();">Opnieuw spelen</button>
+  <button class="btn" style="background: none; border: 1px solid #444; color: #888; font-size: 0.7rem;" onclick="resetGame();">Opnieuw spelen</button>
 </div>
 
 <footer>SUMMIO EMSLANDERMEER • PASEN 2026</footer>
@@ -957,6 +957,17 @@
       // Optioneel: sluit ook het menu als je de modal handmatig sluit
       document.getElementById('menu-open').checked = false;
     }
+
+    window.resetGame = () => {
+        // Wis de opgeslagen bingo en woordzoeker data uit het geheugen van de telefoon
+        localStorage.removeItem('bingo_pazen');
+        
+        // Optioneel: als je ook de stemmen (likes) wilt resetten voor jezelf:
+        // ACTIVITIES.forEach(a => localStorage.removeItem(`voted_${a.id}`));
+    
+        // Herlaad de pagina
+        location.reload();
+    };
   
     // Initialiseer de basis weergave
     renderActivities();
